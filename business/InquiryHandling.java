@@ -1,0 +1,75 @@
+package business;
+
+import Data.Complaint;
+import Data.Inquiry;
+import Data.Question;
+import Data.Request;
+import java.util.Random;
+
+public class InquiryHandling extends Thread{
+    private Inquiry currentInquiry;
+
+    public Inquiry getCurrentInquiry() {
+        return currentInquiry;
+    }
+    public InquiryHandling(Inquiry inquiry){
+        this.currentInquiry=inquiry;
+    }
+
+    @Deprecated
+    public void createInquiry(int num) throws Exception {
+        switch (num){
+            case 1:
+            {
+                currentInquiry=new Question();
+                break;
+            }
+            case 2:{
+                currentInquiry=new Request();
+                break;
+            }
+            case 3:{
+                currentInquiry=new Complaint();
+                break;
+            }
+            default:
+                throw new Exception("incorrect input");
+        }
+    }
+
+    @Override
+    public void run() {
+        Random rand = new Random();
+        int estimationTime;
+        if (currentInquiry instanceof Question) {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            estimationTime = rand.nextInt(5) + 1; // 1-5 שניות
+        } else if (currentInquiry instanceof Request) {
+            estimationTime = rand.nextInt(6) + 10; // 10-15 שניות
+        } else if (currentInquiry instanceof Complaint) {
+            estimationTime = rand.nextInt(21) + 20; // 20-40 שניות
+        } else {
+            return;
+        }
+
+        currentInquiry.handling();
+
+        // שחרור תהליכים נוספים אם העומס גבוה
+        if (estimationTime > 5 && Thread.activeCount() > 10) {
+            Thread.yield();
+        }
+
+        // השהיית זמן הריצה בהתאם להערכת הזמן
+        try {
+            Thread.sleep(estimationTime * 1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // הדפסת פרטי הפנייה
+        System.out.println(currentInquiry.getClass().getSimpleName() +
+                " inquiry code: " + currentInquiry.getCode() +
+                ", estimated time: " + estimationTime + "s");
+    }
+
+}
