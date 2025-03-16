@@ -13,8 +13,8 @@ public abstract class Inquiry {
        this.description=description;
        this.creationDate=creationDate;
     }
-    public Inquiry(){
-        fillDataByUser("",LocalDateTime.now());
+    public Inquiry(String description){
+        fillDataByUser(description,LocalDateTime.now());
     }
     public abstract void handling();
 

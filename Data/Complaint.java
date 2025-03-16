@@ -1,14 +1,17 @@
 package Data;
-
 import java.time.LocalDateTime;
-
-import static java.lang.Thread.sleep;
 
 public class Complaint extends Inquiry{
 
     String assignedBranch;
+
     public void fillDataByUser(String description, LocalDateTime creationDate,String assignedBranch){
         super.fillDataByUser(description,creationDate);
+        this.assignedBranch=assignedBranch;
+    }
+
+    public Complaint(String description,String assignedBranch) {
+        super(description);
         this.assignedBranch=assignedBranch;
     }
 

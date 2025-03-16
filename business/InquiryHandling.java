@@ -1,5 +1,4 @@
 package business;
-
 import Data.Complaint;
 import Data.Inquiry;
 import Data.Question;
@@ -21,15 +20,15 @@ public class InquiryHandling extends Thread{
         switch (num){
             case 1:
             {
-                currentInquiry=new Question();
+                currentInquiry=new Question("");
                 break;
             }
             case 2:{
-                currentInquiry=new Request();
+                currentInquiry=new Request("");
                 break;
             }
             case 3:{
-                currentInquiry=new Complaint();
+                currentInquiry=new Complaint("","");
                 break;
             }
             default:
