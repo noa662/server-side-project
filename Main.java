@@ -49,7 +49,7 @@ public class Main {
 
         InquiryManager inquiryManager = new InquiryManager();
         inquiryManager.inquiryCreation();
-        inquiryManager.processInquiryManager();
+        inquiryManager.stop();
 
 
 //        InquiryHandling handling1 = new InquiryHandling();
