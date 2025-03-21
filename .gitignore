@@ -48,3 +48,14 @@ Thumbs.db
 *.mov
 *.wmv
 
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+
