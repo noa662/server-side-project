@@ -2,6 +2,8 @@ package business;
 import Data.Complaint;
 import Data.Question;
 import Data.Request;
+import HandleStoreFiles.HandleFiles;
+
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -22,6 +24,7 @@ public void inquiryCreation() {
     String choose;
     String description;
     InquiryHandling newInquiry = null;
+    HandleFiles handleFiles=new HandleFiles();
     while (true) {
         System.out.println("enter your choose, 1->Question 2->Request 3->Complaint");
         choose = scanner.next();
@@ -30,12 +33,14 @@ public void inquiryCreation() {
                 System.out.println("Add a short description");
                 description = scanner.next();
                 newInquiry=new InquiryHandling(new Question(description));
+                handleFiles.saveFile((Question)newInquiry.getCurrentInquiry());
                 break;
             }
             case "2": {
                 System.out.println("Add a short description");
                 description = scanner.next();
                 newInquiry=new InquiryHandling(new Request(description));
+                handleFiles.saveFile((Question)newInquiry.getCurrentInquiry());
                 break;
             }
             case "3": {
@@ -44,6 +49,7 @@ public void inquiryCreation() {
                 System.out.println("Insert the assigned branch");
                 String assignedBranch = scanner.next();
                 newInquiry=new InquiryHandling(new Complaint(description,assignedBranch));
+                handleFiles.saveFile((Question)newInquiry.getCurrentInquiry());
                 break;
             }
             default: {

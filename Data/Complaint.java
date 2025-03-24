@@ -1,7 +1,9 @@
 package Data;
+import HandleStoreFiles.IForSaving;
+
 import java.time.LocalDateTime;
 
-public class Complaint extends Inquiry{
+public class Complaint extends Inquiry implements IForSaving {
 
     String assignedBranch;
 
@@ -18,5 +20,20 @@ public class Complaint extends Inquiry{
     @Override
     public void handling() {
         System.out.println("...handling complain inquiry code "+code);
+    }
+
+    @Override
+    public String getFolderName() {
+        return "Complaints";
+    }
+
+    @Override
+    public String getFileName() {
+        return code.toString();
+    }
+
+    @Override
+    public String getData() {
+        return "Complaint require, code "+code+", description: "+description;
     }
 }
