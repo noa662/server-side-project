@@ -29,8 +29,9 @@ public class RenameFilesAtNight extends Thread{
 
         for(File f:files){
             if(f.isFile()){
-                f.renameTo(new File(directory, text + f.getName()));
-                System.out.println("Rename file to "+f.getName());
+                File newFile=new File(directory, text + f.getName());
+                f.renameTo(newFile);
+                System.out.println("Rename file from "+f.getName()+" to "+newFile);
             }
         }
     }
