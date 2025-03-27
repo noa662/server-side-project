@@ -1,18 +1,43 @@
 package business;
 import Data.Complaint;
+import Data.Inquiry;
 import Data.Question;
 import Data.Request;
 import HandleStoreFiles.HandleFiles;
+import HandleStoreFiles.IForSaving;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 
 public class InquiryManager {
 
     private static InquiryManager instance;
-    private BlockingQueue<InquiryHandling> q;
+    private static final BlockingQueue<InquiryHandling> q;
     private ExecutorService executer;
     private boolean running=true;
+
+    static {
+       q=new LinkedBlockingQueue<>();
+        loadInquiries();
+    }
+
+    private static void loadInquiries() {
+        File directory=new File("Inquiries");
+        for(File dir:directory.listFiles()){
+            File[] files=dir.listFiles();
+            if(files==null)
+                return;
+            HandleFiles handleFiles=new HandleFiles();
+            for(File f:files){
+                IForSaving newInquiry=handleFiles.readFile(f);
+                if(newInquiry instanceof Inquiry){
+                    InquiryHandling inquiryHandling=new InquiryHandling((Inquiry) newInquiry);
+                    q.add(inquiryHandling);
+                }
+            }
+        }
+    }
 
     public static InquiryManager getInstance(){
         if(instance==null)
@@ -20,7 +45,6 @@ public class InquiryManager {
         return instance;
     }
     private InquiryManager() {
-       q = new LinkedBlockingQueue<>();
        executer= Executors.newCachedThreadPool();
        start();//הפעלה של הפונקציה לשליפה מהתור בסרד נפרד ע"י הפונקציה start
   }
@@ -46,7 +70,7 @@ public void inquiryCreation() {
                 System.out.println("Add a short description");
                 description = scanner.next();
                 newInquiry=new InquiryHandling(new Request(description));
-                handleFiles.saveFile((Question)newInquiry.getCurrentInquiry());
+                handleFiles.saveFile((Request)newInquiry.getCurrentInquiry());
                 break;
             }
             case "3": {
@@ -55,7 +79,7 @@ public void inquiryCreation() {
                 System.out.println("Insert the assigned branch");
                 String assignedBranch = scanner.next();
                 newInquiry=new InquiryHandling(new Complaint(description,assignedBranch));
-                handleFiles.saveFile((Question)newInquiry.getCurrentInquiry());
+                handleFiles.saveFile((Complaint)newInquiry.getCurrentInquiry());
                 break;
             }
             default: {
@@ -76,7 +100,7 @@ public void inquiryCreation() {
 
     public void stop() {
         running = false;
-        executer.shutdown();
+        executer.shutdownNow();
     }
 
     public void start() {
@@ -85,7 +109,7 @@ public void inquiryCreation() {
     }
 
     public void processInquiryManager() {
-        while (running||!q.isEmpty()) {
+        while (running) {
             try {
                 InquiryHandling inquiry = q.poll(1, TimeUnit.SECONDS);
                 if(inquiry!=null)//אם היתה פנייה זמינה בתור
