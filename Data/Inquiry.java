@@ -8,13 +8,17 @@ public abstract class Inquiry {
     protected Integer code;
     protected String description;
     protected LocalDateTime creationDate;
+    protected  String className;
+
     public void fillDataByUser(String description,LocalDateTime creationDate){
         this.code=nextCodeVal++;
        this.description=description;
        this.creationDate=creationDate;
     }
     public Inquiry(String description){
+
         fillDataByUser(description,LocalDateTime.now());
+        this.className=this.getClass().getName();
     }
     public abstract void handling();
 

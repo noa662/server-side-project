@@ -2,6 +2,7 @@ package Data;
 import HandleStoreFiles.IForSaving;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Complaint extends Inquiry implements IForSaving {
 
@@ -15,6 +16,11 @@ public class Complaint extends Inquiry implements IForSaving {
     public Complaint(String description,String assignedBranch) {
         super(description);
         this.assignedBranch=assignedBranch;
+    }
+
+    public Complaint() {
+        super("description");
+        this.assignedBranch="assignedBranch";
     }
 
     @Override
@@ -34,6 +40,19 @@ public class Complaint extends Inquiry implements IForSaving {
 
     @Override
     public String getData() {
-        return "Complaint require, code "+code+", description: "+description+" assingmentBranch: "+assignedBranch;
+        return className+","+code+","+description+","+assignedBranch;
+    }
+
+    @Override
+    public void parseFromFile(List<String> values) {
+        className=values.get(0);
+        code=Integer.parseInt(values.get(1));
+        nextCode(code);
+        description=values.get(2);
+        assignedBranch=values.get(3);
+    }
+
+    public synchronized void nextCode(int code){
+        nextCodeVal = Math.max(nextCodeVal, code + 1);
     }
 }

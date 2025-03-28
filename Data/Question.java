@@ -2,6 +2,8 @@ package Data;
 
 import HandleStoreFiles.IForSaving;
 
+import java.util.List;
+
 public class Question extends Inquiry implements IForSaving {
     @Override
     public void handling() {
@@ -10,6 +12,10 @@ public class Question extends Inquiry implements IForSaving {
 
     public Question(String description) {
         super(description);
+    }
+
+    public Question() {
+        super("description");
     }
 
     @Override
@@ -24,6 +30,18 @@ public class Question extends Inquiry implements IForSaving {
 
     @Override
     public String getData() {
-        return "Question require, code "+code+", description: "+description;
+        return className+","+code+","+description;
+    }
+
+    @Override
+    public void parseFromFile(List<String> values) {
+        className=values.get(0);
+        code=Integer.parseInt(values.get(1));
+        nextCode(code);
+        description=values.get(2);
+    }
+
+    public synchronized void nextCode(int code){
+        nextCodeVal = Math.max(nextCodeVal, code + 1);
     }
 }

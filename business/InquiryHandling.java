@@ -3,6 +3,9 @@ import Data.Complaint;
 import Data.Inquiry;
 import Data.Question;
 import Data.Request;
+import HandleStoreFiles.HandleFiles;
+import HandleStoreFiles.IForSaving;
+
 import java.util.Random;
 
 public class InquiryHandling extends Thread{
@@ -69,6 +72,9 @@ public class InquiryHandling extends Thread{
         System.out.println(currentInquiry.getClass().getSimpleName() +
                 " inquiry code: " + currentInquiry.getCode() +
                 ", estimated time: " + estimationTime + "s");
+
+        HandleFiles handleFiles=new HandleFiles();
+        handleFiles.deleteFile((IForSaving) this.currentInquiry);
     }
 
 }
