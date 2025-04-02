@@ -20,6 +20,8 @@ public abstract class Inquiry {
         fillDataByUser(description,LocalDateTime.now());
         this.className=this.getClass().getName();
     }
+    public Inquiry(){};
+
     public abstract void handling();
 
     public static Integer getNextCodeVal() {
