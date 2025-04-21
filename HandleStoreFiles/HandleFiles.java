@@ -181,7 +181,6 @@ public class HandleFiles {
                             f.set(instance,values[index++]);
                     }
                     else{//complex object
-                        String s=f.getType().getName();
                         Object o=createInstance(values,index);
                         f.set(instance,o);
                     }
