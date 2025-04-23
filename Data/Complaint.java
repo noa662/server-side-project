@@ -34,6 +34,6 @@ public class Complaint extends Inquiry implements IForSaving {
 
     @Override
     public String getData() {
-        return "Complaint require, code "+code+", description: "+description;
+        return "Complaint require, code "+code+", description: "+description+" assingmentBranch: "+assignedBranch;
     }
 }
