@@ -1,18 +1,46 @@
 package business;
 import Data.Complaint;
+import Data.Inquiry;
 import Data.Question;
 import Data.Request;
 import HandleStoreFiles.HandleFiles;
+import HandleStoreFiles.IForSaving;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 
 public class InquiryManager {
 
     private static InquiryManager instance;
-    private BlockingQueue<InquiryHandling> q;
+    private static final BlockingQueue<Inquiry> q;
     private ExecutorService executer;
     private boolean running=true;
+
+    static {
+       q=new LinkedBlockingQueue<>();
+        loadInquiries();
+    }
+
+    private static void loadInquiries() {
+        File directory=new File("Inquiries");
+        if(!directory.exists())
+            directory.mkdir();
+        for(File dir:directory.listFiles()){
+            File[] files=dir.listFiles();
+            if(files==null)
+                return;
+            HandleFiles handleFiles=new HandleFiles();
+            for(File f:files){
+                IForSaving newInquiry=handleFiles.readFile(f);
+//                if(newInquiry instanceof Inquiry){
+//                    InquiryHandling inquiryHandling=new InquiryHandling((Inquiry) newInquiry);
+//                    q.add(inquiryHandling.getCurrentInquiry());
+//                }
+                q.add((Inquiry) newInquiry);
+            }
+        }
+    }
 
     public static InquiryManager getInstance(){
         if(instance==null)
@@ -20,7 +48,6 @@ public class InquiryManager {
         return instance;
     }
     private InquiryManager() {
-       q = new LinkedBlockingQueue<>();
        executer= Executors.newCachedThreadPool();
        start();//הפעלה של הפונקציה לשליפה מהתור בסרד נפרד ע"י הפונקציה start
   }
@@ -29,7 +56,7 @@ public void inquiryCreation() {
     Scanner scanner = new Scanner(System.in);
     String choose;
     String description;
-    InquiryHandling newInquiry = null;
+    Inquiry newInquiry = null;
     HandleFiles handleFiles=new HandleFiles();
     while (true) {
         System.out.println("enter your choose, 1->Question 2->Request 3->Complaint");
@@ -38,15 +65,15 @@ public void inquiryCreation() {
             case "1": {
                 System.out.println("Add a short description");
                 description = scanner.next();
-                newInquiry=new InquiryHandling(new Question(description));
-                handleFiles.saveFile((Question)newInquiry.getCurrentInquiry());
+                newInquiry=new Question(description);
+                handleFiles.saveFile((Question)newInquiry);
                 break;
             }
             case "2": {
                 System.out.println("Add a short description");
                 description = scanner.next();
-                newInquiry=new InquiryHandling(new Request(description));
-                handleFiles.saveFile((Question)newInquiry.getCurrentInquiry());
+                newInquiry=new Request(description);
+                handleFiles.saveFile((Request)newInquiry);
                 break;
             }
             case "3": {
@@ -54,8 +81,8 @@ public void inquiryCreation() {
                 description = scanner.next();
                 System.out.println("Insert the assigned branch");
                 String assignedBranch = scanner.next();
-                newInquiry=new InquiryHandling(new Complaint(description,assignedBranch));
-                handleFiles.saveFile((Question)newInquiry.getCurrentInquiry());
+                newInquiry=new Complaint(description,assignedBranch);
+                handleFiles.saveFile((Complaint)newInquiry);
                 break;
             }
             default: {
@@ -76,7 +103,7 @@ public void inquiryCreation() {
 
     public void stop() {
         running = false;
-        executer.shutdown();
+        executer.shutdownNow();
     }
 
     public void start() {
@@ -85,11 +112,12 @@ public void inquiryCreation() {
     }
 
     public void processInquiryManager() {
-        while (running||!q.isEmpty()) {
+        while (running) {
             try {
-                InquiryHandling inquiry = q.poll(1, TimeUnit.SECONDS);
+                Inquiry inquiry = q.poll(1, TimeUnit.SECONDS);
+                InquiryHandling inquiryHandling=new InquiryHandling(inquiry);
                 if(inquiry!=null)//אם היתה פנייה זמינה בתור
-                    executer.submit(inquiry);
+                    executer.submit(inquiryHandling);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
                 break;
