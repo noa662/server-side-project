@@ -59,6 +59,14 @@ Thumbs.db
 .settings/
 .metadata/
 
-# Inquiries/
+Inquiries/
+
+out/
+
+*.csv
+
+*.docx
+
+PersonForTestSaving*
 
 
