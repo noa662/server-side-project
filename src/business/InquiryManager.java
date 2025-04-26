@@ -1,0 +1,127 @@
+package business;
+import Data.Complaint;
+import Data.Inquiry;
+import Data.Question;
+import Data.Request;
+import HandleStoreFiles.HandleFiles;
+import HandleStoreFiles.IForSaving;
+
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.*;
+
+public class InquiryManager {
+
+    private static InquiryManager instance;
+    private static final BlockingQueue<Inquiry> q;
+    private ExecutorService executer;
+    private boolean running=true;
+
+    static {
+       q=new LinkedBlockingQueue<>();
+        loadInquiries();
+    }
+
+    private static void loadInquiries() {
+        File directory=new File("Inquiries");
+        if(!directory.exists())
+            directory.mkdir();
+        for(File dir:directory.listFiles()){
+            File[] files=dir.listFiles();
+            if(files==null)
+                return;
+            HandleFiles handleFiles=new HandleFiles();
+            for(File f:files){
+                IForSaving newInquiry=handleFiles.readFile(f);
+//                if(newInquiry instanceof Inquiry){
+//                    InquiryHandling inquiryHandling=new InquiryHandling((Inquiry) newInquiry);
+//                    q.add(inquiryHandling.getCurrentInquiry());
+//                }
+                q.add((Inquiry) newInquiry);
+            }
+        }
+    }
+
+    public static InquiryManager getInstance(){
+        if(instance==null)
+            instance=new InquiryManager();
+        return instance;
+    }
+    private InquiryManager() {
+       executer= Executors.newCachedThreadPool();
+       start();//הפעלה של הפונקציה לשליפה מהתור בסרד נפרד ע"י הפונקציה start
+  }
+
+public void inquiryCreation() {
+    Scanner scanner = new Scanner(System.in);
+    String choose;
+    String description;
+    Inquiry newInquiry = null;
+    HandleFiles handleFiles=new HandleFiles();
+    while (true) {
+        System.out.println("enter your choose, 1->Question 2->Request 3->Complaint");
+        choose = scanner.next();
+        switch (choose) {
+            case "1": {
+                System.out.println("Add a short description");
+                description = scanner.next();
+                newInquiry=new Question(description);
+                handleFiles.saveFile((Question)newInquiry);
+                break;
+            }
+            case "2": {
+                System.out.println("Add a short description");
+                description = scanner.next();
+                newInquiry=new Request(description);
+                handleFiles.saveFile((Request)newInquiry);
+                break;
+            }
+            case "3": {
+                System.out.println("Add a short description");
+                description = scanner.next();
+                System.out.println("Insert the assigned branch");
+                String assignedBranch = scanner.next();
+                newInquiry=new Complaint(description,assignedBranch);
+                handleFiles.saveFile((Complaint)newInquiry);
+                break;
+            }
+            default: {
+                if (!choose.equals("exit")){
+                    System.out.println("Unvalid input, try again");
+                    continue;
+                }
+                break;
+            }
+        }
+        if (choose.equals("exit")){
+            stop();
+            break;
+        }
+        q.add(newInquiry);
+    }
+}
+
+    public void stop() {
+        running = false;
+        executer.shutdownNow();
+    }
+
+    public void start() {
+        Thread processingThread = new Thread(this::processInquiryManager);
+        processingThread.start();
+    }
+
+    public void processInquiryManager() {
+        while (running) {
+            try {
+                Inquiry inquiry = q.poll(1, TimeUnit.SECONDS);
+                InquiryHandling inquiryHandling=new InquiryHandling(inquiry);
+                if(inquiry!=null)//אם היתה פנייה זמינה בתור
+                    executer.submit(inquiryHandling);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restore interrupted status
+                break;
+            }
+        }
+    }
+}
