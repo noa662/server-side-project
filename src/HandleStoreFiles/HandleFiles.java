@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HandleFiles {
-    public static String FOLDER= "Inquiries";
+    public static String FOLDER= "inquirymanagement_rs/Inquiries";
 
     public void saveFile(IForSaving forSaving) {
         try {
