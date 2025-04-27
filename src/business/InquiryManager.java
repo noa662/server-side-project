@@ -37,7 +37,7 @@ public class InquiryManager {
 //                    InquiryHandling inquiryHandling=new InquiryHandling((Inquiry) newInquiry);
 //                    q.add(inquiryHandling.getCurrentInquiry());
 //                }
-                q.add((Inquiry) newInquiry);
+                addInquiryToQueue((Inquiry) newInquiry);
             }
         }
     }
@@ -57,7 +57,6 @@ public void inquiryCreation() {
     String choose;
     String description;
     Inquiry newInquiry = null;
-    HandleFiles handleFiles=new HandleFiles();
     while (true) {
         System.out.println("enter your choose, 1->Question 2->Request 3->Complaint");
         choose = scanner.next();
@@ -66,14 +65,12 @@ public void inquiryCreation() {
                 System.out.println("Add a short description");
                 description = scanner.next();
                 newInquiry=new Question(description);
-                handleFiles.saveFile((Question)newInquiry);
                 break;
             }
             case "2": {
                 System.out.println("Add a short description");
                 description = scanner.next();
                 newInquiry=new Request(description);
-                handleFiles.saveFile((Request)newInquiry);
                 break;
             }
             case "3": {
@@ -82,7 +79,6 @@ public void inquiryCreation() {
                 System.out.println("Insert the assigned branch");
                 String assignedBranch = scanner.next();
                 newInquiry=new Complaint(description,assignedBranch);
-                handleFiles.saveFile((Complaint)newInquiry);
                 break;
             }
             default: {
@@ -97,9 +93,20 @@ public void inquiryCreation() {
             stop();
             break;
         }
-        q.add(newInquiry);
+        addInquiryToQueue(newInquiry);
     }
 }
+
+    public static void addInquiryToQueue(Inquiry newInquiry) {
+        HandleFiles handleFiles=new HandleFiles();
+        handleFiles.saveFile((IForSaving) newInquiry);
+        q.add(newInquiry);
+    }
+
+    public static BlockingQueue<Inquiry> getAllInquiries(){
+        System.out.println(q);
+        return q;
+    }
 
     public void stop() {
         running = false;
