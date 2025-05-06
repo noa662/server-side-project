@@ -33,11 +33,7 @@ public class Request extends Inquiry implements IForSaving {
     public void parseFromFile(List<String> values) {
         className=values.get(0);
         code=Integer.parseInt(values.get(1));
-        nextCode(code);
         description=values.get(2);
     }
 
-    public synchronized void nextCode(int code){
-        nextCodeVal = Math.max(nextCodeVal, code + 1);
-    }
 }

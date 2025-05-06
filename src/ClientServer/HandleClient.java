@@ -2,59 +2,61 @@ package ClientServer;
 
 import Data.Inquiry;
 import business.InquiryManager;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.BlockingDeque;
 
-public class HandleClient extends Thread{
+public class HandleClient extends Thread {
     Socket clientSocket;
+    ObjectInputStream in;
+    ObjectOutputStream out;
 
-    public HandleClient(Socket socket){
-        clientSocket=socket;
+    public HandleClient(Socket socket) {
+        clientSocket = socket;
     }
 
-    public void HandleClientRequest(){
-        RequestData requestData=new RequestData();
-        ResponseData responseData=new ResponseData();
+    public void HandleClientRequest() {
+
         try {
-            ObjectInputStream in= (ObjectInputStream) clientSocket.getInputStream();
-            ObjectOutputStream out= (ObjectOutputStream) clientSocket.getOutputStream();
-            RequestData request= (RequestData) in.readObject();
 
-            switch (request.getAction()){
-                case ADD_INQUIRY:{
-                    try{
+            in =new ObjectInputStream(clientSocket.getInputStream());
+            RequestData request = (RequestData) in.readObject();
+
+            switch (request.getAction()) {
+                case ADD_INQUIRY: {
+                    try {
                         InquiryManager.addInquiryToQueue((Inquiry) request.getParameters());
-                        out.writeObject(new ResponseData(ResponseStatus.SCCESS,"Your request has been successfully received.",null));
-                    }
-                    catch (Exception e){
-                        out.writeObject(new ResponseData(ResponseStatus.FAIL,e.getMessage(),null));
-                    }
-                }
-
-                case ALL_INQUIRY:{
-                    try{
-                        BlockingDeque<Inquiry>q= (BlockingDeque<Inquiry>) InquiryManager.getAllInquiries();
-                        out.writeObject(new ResponseData(ResponseStatus.SCCESS,"Your request has been successfully received.",q));
-                    }
-                    catch (Exception e){
-                        out.writeObject(new ResponseData(ResponseStatus.FAIL,e.getMessage(),null));
+                        out.writeObject(new ResponseData(ResponseStatus.SCCESS, "Your request has been successfully received.", null));
+                        out.flush();
+                    } catch (Exception e) {
+                        out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
                     }
                 }
 
-                default:{
-                    out.writeObject(new ResponseData(ResponseStatus.FAIL,"no such action",null));
+                case ALL_INQUIRY: {
+                    try {
+                        BlockingDeque<Inquiry> q = (BlockingDeque<Inquiry>) InquiryManager.getAllInquiries();
+                        out.writeObject(new ResponseData(ResponseStatus.SCCESS, "Your request has been successfully received.", q));
+                        out.flush();
+                    } catch (Exception e) {
+                        out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
+                    }
+                }
+
+                default: {
+                    out =new ObjectOutputStream(clientSocket.getOutputStream());
+                    out.writeObject(new ResponseData(ResponseStatus.FAIL, "no such action", null));
+                    in.close();
+                    out.close();
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
+
     @Override
-    public void run(){
+    public void run() {
         HandleClientRequest();
     }
 

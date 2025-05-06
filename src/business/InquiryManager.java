@@ -12,6 +12,7 @@ import java.util.concurrent.*;
 
 public class InquiryManager {
 
+    static Integer nextCodeVal = 0;
     private static InquiryManager instance;
     private static final BlockingQueue<Inquiry> q;
     private ExecutorService executer;
@@ -33,10 +34,7 @@ public class InquiryManager {
             HandleFiles handleFiles=new HandleFiles();
             for(File f:files){
                 IForSaving newInquiry=handleFiles.readFile(f);
-//                if(newInquiry instanceof Inquiry){
-//                    InquiryHandling inquiryHandling=new InquiryHandling((Inquiry) newInquiry);
-//                    q.add(inquiryHandling.getCurrentInquiry());
-//                }
+                nextCodeVal=Math.max(nextCodeVal,((Inquiry)newInquiry).getCode()+1);
                 addInquiryToQueue((Inquiry) newInquiry);
             }
         }
@@ -98,6 +96,7 @@ public void inquiryCreation() {
 }
 
     public static void addInquiryToQueue(Inquiry newInquiry) {
+        newInquiry.setCode(nextCodeVal);
         HandleFiles handleFiles=new HandleFiles();
         handleFiles.saveFile((IForSaving) newInquiry);
         q.add(newInquiry);

@@ -4,14 +4,13 @@ import java.time.LocalDateTime;
 
 public abstract class Inquiry {
 
-    static Integer nextCodeVal = 0;
     protected Integer code;
     protected String description;
     protected LocalDateTime creationDate;
     protected  String className;
 
     public void fillDataByUser(String description,LocalDateTime creationDate){
-        this.code=nextCodeVal++;
+
        this.description=description;
        this.creationDate=creationDate;
     }
@@ -23,14 +22,6 @@ public abstract class Inquiry {
     public Inquiry(){};
 
     public abstract void handling();
-
-    public static Integer getNextCodeVal() {
-        return nextCodeVal;
-    }
-
-    public static void setNextCodeVal(Integer nextCodeVal) {
-        Inquiry.nextCodeVal = nextCodeVal;
-    }
 
     public Integer getCode() {
         return code;
