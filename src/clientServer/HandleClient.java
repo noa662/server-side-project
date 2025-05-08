@@ -1,11 +1,9 @@
 package clientServer;
 
-import Data.Inquiry;
+import data.Inquiry;
 import business.InquiryManager;
 import java.io.*;
 import java.net.Socket;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class HandleClient extends Thread {
@@ -28,7 +26,7 @@ public class HandleClient extends Thread {
                 case ADD_INQUIRY: {
                     try {
                         InquiryManager.addInquiryToQueue((Inquiry) request.getParameters()[0]);
-                        out.writeObject(new ResponseData(ResponseStatus.SCCESS, "Your request has been successfully received.", null));
+                        out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "Your request has been successfully received.", null));
                         out.flush();
                     } catch (Exception e) {
                         out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
@@ -38,7 +36,7 @@ public class HandleClient extends Thread {
                 case ALL_INQUIRY: {
                     try {
                         LinkedBlockingQueue<Inquiry> q = (LinkedBlockingQueue<Inquiry>) InquiryManager.getAllInquiries();
-                        out.writeObject(new ResponseData(ResponseStatus.SCCESS, "Your request has been successfully received.", q));
+                        out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "Your request has been successfully received.", q));
                         out.flush();
                     } catch (Exception e) {
                         out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));

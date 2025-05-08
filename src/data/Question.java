@@ -1,22 +1,26 @@
-package Data;
+package data;
 
 import HandleStoreFiles.IForSaving;
 
 import java.util.List;
 
-public class Request extends Inquiry implements IForSaving {
+public class Question extends Inquiry{
     @Override
     public void handling() {
-        System.out.println("...handling request inquiry code "+code);
+        System.out.println("...handling question inquiry code "+code);
     }
 
-    public Request(String description) { super(description);}
+    public Question(String description) {
+        super(description);
+    }
 
-    public Request() { super("description");}
+    public Question() {
+        super("description");
+    }
 
     @Override
     public String getFolderName() {
-        return "Requests";
+        return "Questions";
     }
 
     @Override

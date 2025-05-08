@@ -1,9 +1,13 @@
-package Data;
+package data;
 
+import HandleStoreFiles.IForSaving;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public abstract class Inquiry {
+public abstract class Inquiry implements IForSaving, Serializable {
 
+    private static final long serialVersionUID = 1L;
     protected Integer code;
     protected String description;
     protected LocalDateTime creationDate;

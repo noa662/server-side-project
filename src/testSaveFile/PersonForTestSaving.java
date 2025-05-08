@@ -1,8 +1,7 @@
 package testSaveFile;
 
-import Data.Complaint;
-import Data.Inquiry;
-import Data.Question;
+import data.Inquiry;
+import data.Question;
 import HandleStoreFiles.IForSaving;
 
 import java.util.List;

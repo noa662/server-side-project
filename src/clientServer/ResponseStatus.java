@@ -1,5 +1,5 @@
 package clientServer;
 
 public enum ResponseStatus {
-    SCCESS, FAIL
+    SUCCESS, FAIL
 }
