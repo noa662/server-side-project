@@ -13,10 +13,10 @@ public class TestingHandleFiles {
         PersonForTestSaving p4 = new PersonForTestSaving("0090","ccdc");
 
         HandleFiles handleFiles = new HandleFiles();
-        handleFiles.saveFile(p3);
-        handleFiles.saveFiles(Arrays.asList(p1,p2,p3,p4));
+        handleFiles.saveFile("inquirymanagement_rs/Inquiries",p3);
+        handleFiles.saveFiles("inquirymanagement_rs/Inquiries",Arrays.asList(p1,p2,p3,p4));
 
-        handleFiles.deleteFile(p2);
+        handleFiles.deleteFile("inquirymanagement_rs/Inquiries",p2);
 
     }
 }

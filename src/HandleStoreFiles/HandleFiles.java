@@ -10,11 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HandleFiles {
-    public static String FOLDER= "inquirymanagement_rs/Inquiries";
+    //public static String FOLDER= "inquirymanagement_rs/Inquiries";
 
-    public void saveFile(IForSaving forSaving) {
+    public void saveFile(String mainFolder,IForSaving forSaving) {
         try {
-            File folder = new File(FOLDER,forSaving.getFolderName());
+            File folder = new File(mainFolder,forSaving.getFolderName());
             if (!folder.exists()) {
                 folder.mkdirs();
             }
@@ -31,8 +31,8 @@ public class HandleFiles {
         }
     }
 
-    public void deleteFile(IForSaving forSaving) {
-        File f = new File(FOLDER,forSaving.getFolderName());
+    public void deleteFile(String mainFolder,IForSaving forSaving) {
+        File f = new File(mainFolder,forSaving.getFolderName());
         File file=new File(f,forSaving.getFileName() + ".txt");
         System.out.println(file.exists());
         if (file.exists() && file.delete()) {
@@ -42,14 +42,14 @@ public class HandleFiles {
         }
     }
 
-    public void updateFile(IForSaving forSaving) {
+    public void updateFile(String mainFolder,IForSaving forSaving) {
         try {
-            File f = new File(FOLDER,forSaving.getFolderName());
+            File f = new File(mainFolder,forSaving.getFolderName());
             File file=new File(f,forSaving.getFileName() + ".txt");
 
             if (!file.exists()) {
                 System.out.println("הקובץ לא קיים, יבוצע שמירה במקום עדכון.");
-                saveFile(forSaving);
+                saveFile(mainFolder,forSaving);
                 return;
             }
 
@@ -64,9 +64,9 @@ public class HandleFiles {
         }
     }
 
-    public void saveFiles(List<IForSaving> forSavingList) {
+    public void saveFiles(String mainFolder,List<IForSaving> forSavingList) {
         for (IForSaving i : forSavingList) {
-            saveFile(i);
+            saveFile(mainFolder,i);
         }
     }
 
@@ -210,6 +210,17 @@ public class HandleFiles {
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteCSV(String mainFolder,IForSaving forSaving) {
+        File f = new File(mainFolder,forSaving.getFolderName());
+        File file=new File(f,forSaving.getFileName() + ".csv");
+        System.out.println(file.exists());
+        if (file.exists() && file.delete()) {
+            System.out.println("הקובץ נמחק בהצלחה: " + file.getAbsolutePath());
+        } else {
+            System.out.println("שגיאה במחיקת הקובץ: " + file.getAbsolutePath());
         }
     }
 }
