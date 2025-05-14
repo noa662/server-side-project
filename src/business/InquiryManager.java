@@ -139,4 +139,16 @@ public class InquiryManager {
     public Map<ServiceRepresentative,Inquiry> getRepresentativeInquiryMap(){
         return representativeInquiryMap;
     }
+
+    public ServiceRepresentative getRepresentativeByInquiry(Inquiry inquiry) {
+        for(Map.Entry<ServiceRepresentative,Inquiry> entry : representativeInquiryMap.entrySet()){
+            if(entry.getValue().equals(inquiry))
+                return entry.getKey();
+        }
+        return null;
+    }
+
+    public Inquiry getInquiryByRepresentative(ServiceRepresentative representative){
+        return representativeInquiryMap.get(representative);
+    }
 }
