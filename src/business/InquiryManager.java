@@ -12,7 +12,7 @@ public class InquiryManager {
     private static InquiryManager instance;
     private static final BlockingQueue<Inquiry> q;
     private static final BlockingQueue<ServiceRepresentative> representativeQ;
-    private static final Map<ServiceRepresentative,Inquiry> representativeInquiryMap;
+    private static final Map<Inquiry,ServiceRepresentative> representativeInquiryMap;
     private ExecutorService executer;
     private boolean running=true;
 
@@ -132,7 +132,7 @@ public class InquiryManager {
         }
     }
 
-    public Map<ServiceRepresentative,Inquiry> getRepresentativeInquiryMap(){
+    public Map<Inquiry,ServiceRepresentative> getRepresentativeInquiryMap(){
         return representativeInquiryMap;
     }
 
@@ -140,14 +140,14 @@ public class InquiryManager {
         return representativeQ;
     }
     public ServiceRepresentative getRepresentativeByInquiry(Inquiry inquiry) {
-        for(Map.Entry<ServiceRepresentative,Inquiry> entry : representativeInquiryMap.entrySet()){
-            if(entry.getValue().equals(inquiry))
-                return entry.getKey();
-        }
-        return null;
+        return representativeInquiryMap.get(inquiry);
     }
 
     public Inquiry getInquiryByRepresentative(ServiceRepresentative representative){
-        return representativeInquiryMap.get(representative);
+        for(Map.Entry<Inquiry,ServiceRepresentative> entry : representativeInquiryMap.entrySet()){
+            if(entry.getValue().equals(representative))
+                return entry.getKey();
+        }
+        return null;
     }
 }
