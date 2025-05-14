@@ -9,17 +9,21 @@ import HandleStoreFiles.IForSaving;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
-
+class ServiceRepresentative{/*mock*/}
 public class InquiryManager {
 
     static Integer nextCodeVal = 0;
     private static InquiryManager instance;
     private static final BlockingQueue<Inquiry> q;
+    private static final BlockingQueue<ServiceRepresentative> representativeQ;
+    private static final Map<ServiceRepresentative,Inquiry> representativeInquiryMap;
     private ExecutorService executer;
     private boolean running=true;
 
     static {
        q=new LinkedBlockingQueue<>();
+       representativeQ = new LinkedBlockingQueue<>();
+       representativeInquiryMap = new HashMap<>();
         loadInquiries();
     }
 
@@ -45,12 +49,13 @@ public class InquiryManager {
             instance=new InquiryManager();
         return instance;
     }
+
     private InquiryManager() {
        executer= Executors.newCachedThreadPool();
        start();//הפעלה של הפונקציה לשליפה מהתור בסרד נפרד ע"י הפונקציה start
   }
 
-public void inquiryCreation() {
+    public void inquiryCreation() {
     Scanner scanner = new Scanner(System.in);
     String choose;
     String description;
@@ -129,5 +134,9 @@ public void inquiryCreation() {
                 break;
             }
         }
+    }
+
+    public Map<ServiceRepresentative,Inquiry> getRepresentativeInquiryMap(){
+        return representativeInquiryMap;
     }
 }
