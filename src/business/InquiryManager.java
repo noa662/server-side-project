@@ -1,15 +1,11 @@
 package business;
-import data.Complaint;
-import data.Inquiry;
-import data.Question;
-import data.Request;
+import data.*;
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
 
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
-class ServiceRepresentative{/*mock*/}
 public class InquiryManager {
 
     static Integer nextCodeVal = 0;
@@ -140,6 +136,9 @@ public class InquiryManager {
         return representativeInquiryMap;
     }
 
+    public BlockingQueue<ServiceRepresentative> getRepresentativeQ(){
+        return representativeQ;
+    }
     public ServiceRepresentative getRepresentativeByInquiry(Inquiry inquiry) {
         for(Map.Entry<ServiceRepresentative,Inquiry> entry : representativeInquiryMap.entrySet()){
             if(entry.getValue().equals(inquiry))
