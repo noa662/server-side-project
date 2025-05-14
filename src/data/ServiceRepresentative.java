@@ -6,9 +6,6 @@ import java.util.List;
 
 public class ServiceRepresentative implements IForSaving {
 
-    public ServiceRepresentative() {
-    }
-
     public ServiceRepresentative(String name, int code) {
         this.name = name;
         this.code = code;
@@ -35,21 +32,23 @@ public class ServiceRepresentative implements IForSaving {
 
     @Override
     public String getFolderName() {
-        return "";
+        String code2 = String.valueOf(code);
+        return code2;
     }
 
     @Override
     public String getFileName() {
-        return "";
+        return name;
     }
 
     @Override
     public String getData() {
-        return "";
+        return name + "," + code;
     }
 
     @Override
     public void parseFromFile(List<String> values) {
-
+        name = values.get(0);
+        code = Integer.parseInt(values.get(1));
     }
 }
