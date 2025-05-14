@@ -99,7 +99,7 @@ public class InquiryManager {
     public static void addInquiryToQueue(Inquiry newInquiry) {
         newInquiry.setCode(nextCodeVal);
         HandleFiles handleFiles=new HandleFiles();
-        handleFiles.saveFile((IForSaving) newInquiry);
+        handleFiles.saveFile("inquirymanagement_rs/Inquiries",(IForSaving) newInquiry);
         q.add(newInquiry);
     }
 
