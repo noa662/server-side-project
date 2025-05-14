@@ -31,23 +31,27 @@ public class HandleClient extends Thread {
                     } catch (Exception e) {
                         out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
                     }
+                    break;
                 }
 
                 case ALL_INQUIRY: {
                     try {
                         LinkedBlockingQueue<Inquiry> q = (LinkedBlockingQueue<Inquiry>) InquiryManager.getAllInquiries();
                         out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "Your request has been successfully received.", q));
-                        out.flush();
                     } catch (Exception e) {
                         out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
                     }
+                    break;
                 }
 
                 default: {
                     out =new ObjectOutputStream(clientSocket.getOutputStream());
                     out.writeObject(new ResponseData(ResponseStatus.FAIL, "no such action", null));
                     in.close();
-                   out.close();
+                    //out.flush();
+                    out.close();
+                  clientSocket.close();
+
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
