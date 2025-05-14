@@ -12,8 +12,17 @@ public abstract class Inquiry implements IForSaving, Serializable {
     protected String description;
     protected LocalDateTime creationDate;
     protected  String className;
+    protected InquiryStatus status;
 
-    public void fillDataByUser(String description,LocalDateTime creationDate){
+    public void setStatus(InquiryStatus status) {
+        this.status = status;
+    }
+
+    public InquiryStatus getStatus() {
+        return status;
+    }
+
+    public void fillDataByUser(String description, LocalDateTime creationDate){
 
        this.description=description;
        this.creationDate=creationDate;
