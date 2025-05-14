@@ -1,8 +1,5 @@
 package business;
-import data.Complaint;
-import data.Inquiry;
-import data.Question;
-import data.Request;
+import data.*;
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
 
@@ -39,6 +36,13 @@ public class InquiryHandling extends Thread{
         }
     }
 
+    public void completeInquiry(){
+        currentInquiry.setStatus(InquiryStatus.HANDLED);
+        ServiceRepresentative sr = InquiryManager.getInstance().getRepresentativeInquiryMap().remove(currentInquiry);
+        InquiryManager.getInstance().getRepresentativeQ().add(sr);
+        MoveToHistory();
+        currentInquiry.setStatus(InquiryStatus.MOVEDTOHISTORY);
+    }
     @Override
     public void run() {
         Random rand = new Random();
@@ -76,5 +80,5 @@ public class InquiryHandling extends Thread{
         HandleFiles handleFiles=new HandleFiles();
         handleFiles.deleteFile((IForSaving) this.currentInquiry);
     }
-
+    public void MoveToHistory(){}
 }
