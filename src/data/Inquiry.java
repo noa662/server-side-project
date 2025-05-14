@@ -23,7 +23,6 @@ public abstract class Inquiry implements IForSaving, Serializable {
     }
 
     public void fillDataByUser(String description, LocalDateTime creationDate){
-
        this.description=description;
        this.creationDate=creationDate;
     }

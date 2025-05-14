@@ -1,6 +1,10 @@
 package data;
 
-public class ServiceRepresentative {
+import HandleStoreFiles.IForSaving;
+
+import java.util.List;
+
+public class ServiceRepresentative implements IForSaving {
 
     public ServiceRepresentative() {
     }
@@ -29,4 +33,23 @@ public class ServiceRepresentative {
         this.code = code;
     }
 
+    @Override
+    public String getFolderName() {
+        return "";
+    }
+
+    @Override
+    public String getFileName() {
+        return "";
+    }
+
+    @Override
+    public String getData() {
+        return "";
+    }
+
+    @Override
+    public void parseFromFile(List<String> values) {
+
+    }
 }
