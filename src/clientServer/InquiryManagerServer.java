@@ -6,6 +6,7 @@ import java.net.Socket;
 
 public class InquiryManagerServer {
     ServerSocket myServer;
+
     public InquiryManagerServer(){
         try {
             myServer=new ServerSocket(3030);
@@ -13,15 +14,18 @@ public class InquiryManagerServer {
             throw new RuntimeException(e);
         }
     }
+
    public void start(){
        try {
-          Socket clientSocket= myServer.accept();
-          HandleClient handleClient=new HandleClient(clientSocket);
-           System.out.println("client connected"+ clientSocket.getInetAddress());
-         // handleClient.start();
-          Thread thread=new Thread(handleClient);
-          thread.start();
-           //clientSocket.close();
+           while (true) {
+               Socket clientSocket = myServer.accept();
+               HandleClient handleClient = new HandleClient(clientSocket);
+               System.out.println("client connected" + clientSocket.getInetAddress());
+               // handleClient.start();
+               Thread thread = new Thread(handleClient);
+               thread.start();
+               //clientSocket.close();
+           }
        } catch (IOException e) {
            e.printStackTrace();
        }
