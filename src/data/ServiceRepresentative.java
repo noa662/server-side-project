@@ -32,13 +32,13 @@ public class ServiceRepresentative implements IForSaving {
 
     @Override
     public String getFolderName() {
-        String code2 = String.valueOf(code);
-        return code2;
+        return "Representatives";
     }
 
     @Override
     public String getFileName() {
-        return name;
+        String code2 = String.valueOf(code);
+        return code2;
     }
 
     @Override
