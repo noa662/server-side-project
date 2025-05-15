@@ -1,34 +1,36 @@
 package business;
+
 import data.*;
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
 
+import java.util.Map;
 import java.util.Random;
 
-public class InquiryHandling extends Thread{
+public class InquiryHandling extends Thread {
     private Inquiry currentInquiry;
 
     public Inquiry getCurrentInquiry() {
         return currentInquiry;
     }
-    public InquiryHandling(Inquiry inquiry){
-        this.currentInquiry=inquiry;
+
+    public InquiryHandling(Inquiry inquiry) {
+        this.currentInquiry = inquiry;
     }
 
     @Deprecated
     public void createInquiry(int num) throws Exception {
-        switch (num){
-            case 1:
-            {
-                currentInquiry=new Question("");
+        switch (num) {
+            case 1: {
+                currentInquiry = new Question("");
                 break;
             }
-            case 2:{
-                currentInquiry=new Request("");
+            case 2: {
+                currentInquiry = new Request("");
                 break;
             }
-            case 3:{
-                currentInquiry=new Complaint("","");
+            case 3: {
+                currentInquiry = new Complaint("", "");
                 break;
             }
             default:
@@ -36,13 +38,14 @@ public class InquiryHandling extends Thread{
         }
     }
 
-    public void completeInquiry(){
+    public void completeInquiry() {
         currentInquiry.setStatus(InquiryStatus.HANDLED);
         ServiceRepresentative sr = InquiryManager.getInstance().getRepresentativeInquiryMap().remove(currentInquiry);
         InquiryManager.getInstance().getRepresentativeQ().add(sr);
         MoveToHistory();
         currentInquiry.setStatus(InquiryStatus.MOVEDTOHISTORY);
     }
+
     @Override
     public void run() {
         Random rand = new Random();
@@ -75,10 +78,24 @@ public class InquiryHandling extends Thread{
         // הדפסת פרטי הפנייה
         System.out.println(currentInquiry.getClass().getSimpleName() +
                 " inquiry code: " + currentInquiry.getCode() +
-                ", estimated time: " + estimationTime + "s");
+                ", estimated time: " + estimationTime + "s" +
+                " service representative: " + nameRepresentative(InquiryManager.getInstance()));
 
-        HandleFiles handleFiles=new HandleFiles();
-        handleFiles.deleteFile((IForSaving) this.currentInquiry);
+        HandleFiles handleFiles = new HandleFiles();
+        handleFiles.deleteFile("", this.currentInquiry);
     }
-    public void MoveToHistory(){}
+
+    public String nameRepresentative(InquiryManager inquiryManager) {
+        Map<Inquiry, ServiceRepresentative> map = inquiryManager.getRepresentativeInquiryMap();
+        String name = null;
+        for (var entry : map.entrySet()) {
+            if (entry.getKey().getCode().equals(currentInquiry.getCode())) {
+                name = entry.getValue().getName();
+            }
+        }
+        return name;
+    }
+
+    public void MoveToHistory() {
+    }
 }
