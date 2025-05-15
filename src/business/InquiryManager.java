@@ -1,4 +1,5 @@
 package business;
+
 import data.*;
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
@@ -6,6 +7,7 @@ import HandleStoreFiles.IForSaving;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
+
 public class InquiryManager {
 
     static Integer nextCodeVal = 0;
@@ -14,87 +16,87 @@ public class InquiryManager {
     private static final BlockingQueue<ServiceRepresentative> representativeQ;
     private static final Map<Inquiry,ServiceRepresentative> representativeInquiryMap;
     private ExecutorService executer;
-    private boolean running=true;
+    private boolean running = true;
 
     static {
-       q=new LinkedBlockingQueue<>();
-       representativeQ = new LinkedBlockingQueue<>();
-       representativeInquiryMap = new HashMap<>();
+        q = new LinkedBlockingQueue<>();
+        representativeQ = new LinkedBlockingQueue<>();
+        representativeInquiryMap = new HashMap<>();
         loadInquiries();
     }
 
     private static void loadInquiries() {
-        File directory=new File("Inquiries");
-        if(!directory.exists())
+        File directory = new File("Inquiries");
+        if (!directory.exists())
             directory.mkdir();
-        for(File dir:directory.listFiles()){
-            File[] files=dir.listFiles();
-            if(files==null)
+        for (File dir : directory.listFiles()) {
+            File[] files = dir.listFiles();
+            if (files == null)
                 return;
-            HandleFiles handleFiles=new HandleFiles();
-            for(File f:files){
-                IForSaving newInquiry=handleFiles.readFile(f);
-                nextCodeVal=Math.max(nextCodeVal,((Inquiry)newInquiry).getCode()+1);
+            HandleFiles handleFiles = new HandleFiles();
+            for (File f : files) {
+                IForSaving newInquiry = handleFiles.readFile(f);
+                nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
                 addInquiryToQueue((Inquiry) newInquiry);
             }
         }
     }
 
-    public static InquiryManager getInstance(){
-        if(instance==null)
-            instance=new InquiryManager();
+    public static InquiryManager getInstance() {
+        if (instance == null)
+            instance = new InquiryManager();
         return instance;
     }
 
     private InquiryManager() {
-       executer= Executors.newCachedThreadPool();
-       start();//הפעלה של הפונקציה לשליפה מהתור בסרד נפרד ע"י הפונקציה start
-  }
+        executer = Executors.newCachedThreadPool();
+        start();//הפעלה של הפונקציה לשליפה מהתור בסרד נפרד ע"י הפונקציה start
+    }
 
     public void inquiryCreation() {
-    Scanner scanner = new Scanner(System.in);
-    String choose;
-    String description;
-    Inquiry newInquiry = null;
-    while (true) {
-        System.out.println("enter your choose, 1->Question 2->Request 3->Complaint");
-        choose = scanner.next();
-        switch (choose) {
-            case "1": {
-                System.out.println("Add a short description");
-                description = scanner.next();
-                newInquiry=new Question(description);
-                break;
-            }
-            case "2": {
-                System.out.println("Add a short description");
-                description = scanner.next();
-                newInquiry=new Request(description);
-                break;
-            }
-            case "3": {
-                System.out.println("Add a short description");
-                description = scanner.next();
-                System.out.println("Insert the assigned branch");
-                String assignedBranch = scanner.next();
-                newInquiry=new Complaint(description,assignedBranch);
-                break;
-            }
-            default: {
-                if (!choose.equals("exit")){
-                    System.out.println("Unvalid input, try again");
-                    continue;
+        Scanner scanner = new Scanner(System.in);
+        String choose;
+        String description;
+        Inquiry newInquiry = null;
+        while (true) {
+            System.out.println("enter your choose, 1->Question 2->Request 3->Complaint");
+            choose = scanner.next();
+            switch (choose) {
+                case "1": {
+                    System.out.println("Add a short description");
+                    description = scanner.next();
+                    newInquiry = new Question(description);
+                    break;
                 }
+                case "2": {
+                    System.out.println("Add a short description");
+                    description = scanner.next();
+                    newInquiry = new Request(description);
+                    break;
+                }
+                case "3": {
+                    System.out.println("Add a short description");
+                    description = scanner.next();
+                    System.out.println("Insert the assigned branch");
+                    String assignedBranch = scanner.next();
+                    newInquiry = new Complaint(description, assignedBranch);
+                    break;
+                }
+                default: {
+                    if (!choose.equals("exit")) {
+                        System.out.println("Unvalid input, try again");
+                        continue;
+                    }
+                    break;
+                }
+            }
+            if (choose.equals("exit")) {
+                stop();
                 break;
             }
+            addInquiryToQueue(newInquiry);
         }
-        if (choose.equals("exit")){
-            stop();
-            break;
-        }
-        addInquiryToQueue(newInquiry);
     }
-}
 
     public static void addInquiryToQueue(Inquiry newInquiry) {
         newInquiry.setCode(nextCodeVal);
@@ -103,7 +105,7 @@ public class InquiryManager {
         q.add(newInquiry);
     }
 
-    public static BlockingQueue<Inquiry> getAllInquiries(){
+    public static BlockingQueue<Inquiry> getAllInquiries() {
         System.out.println(q);
         return q;
     }
@@ -122,8 +124,8 @@ public class InquiryManager {
         while (running) {
             try {
                 Inquiry inquiry = q.poll(1, TimeUnit.SECONDS);
-                InquiryHandling inquiryHandling=new InquiryHandling(inquiry);
-                if(inquiry!=null)//אם היתה פנייה זמינה בתור
+                InquiryHandling inquiryHandling = new InquiryHandling(inquiry);
+                if (inquiry != null)//אם היתה פנייה זמינה בתור
                     executer.submit(inquiryHandling);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
@@ -136,9 +138,10 @@ public class InquiryManager {
         return representativeInquiryMap;
     }
 
-    public BlockingQueue<ServiceRepresentative> getRepresentativeQ(){
+    public BlockingQueue<ServiceRepresentative> getRepresentativeQ() {
         return representativeQ;
     }
+
     public ServiceRepresentative getRepresentativeByInquiry(Inquiry inquiry) {
         return representativeInquiryMap.get(inquiry);
     }
@@ -146,8 +149,19 @@ public class InquiryManager {
     public Inquiry getInquiryByRepresentative(ServiceRepresentative representative){
         for(Map.Entry<Inquiry,ServiceRepresentative> entry : representativeInquiryMap.entrySet()){
             if(entry.getValue().equals(representative))
+
                 return entry.getKey();
         }
         return null;
+    }
+    public void removeInquiry(int id) {
+        Map<Inquiry, ServiceRepresentative> map = getRepresentativeInquiryMap();
+        for (var entry : map.entrySet()) {
+            if(entry.getValue().getCode()==id){
+                entry.getKey().setStatus(InquiryStatus.CANCELED);
+            }
+        }
+        map.remove(id);
+        //MoveToHistory();
     }
 }
