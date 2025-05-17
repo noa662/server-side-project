@@ -11,8 +11,17 @@ public abstract class Inquiry implements IForSaving, Serializable {
     protected Integer code;
     protected String description;
     protected LocalDateTime creationDate;
-    protected  String className;
+    protected String className;
     protected InquiryStatus status;
+    protected int codeRepresentative;
+
+    public void setCodeRepresentative(int codeRepresentative) {
+        this.codeRepresentative = codeRepresentative;
+    }
+
+    public int getCodeRepresentative() {
+        return codeRepresentative;
+    }
 
     public void setStatus(InquiryStatus status) {
         this.status = status;
@@ -22,16 +31,21 @@ public abstract class Inquiry implements IForSaving, Serializable {
         return status;
     }
 
-    public void fillDataByUser(String description, LocalDateTime creationDate){
-       this.description=description;
-       this.creationDate=creationDate;
+    public void fillDataByUser(String description, LocalDateTime creationDate) {
+        this.description = description;
+        this.creationDate = creationDate;
     }
-    public Inquiry(String description){
 
-        fillDataByUser(description,LocalDateTime.now());
-        this.className=this.getClass().getName();
+    public Inquiry(String description) {
+
+        fillDataByUser(description, LocalDateTime.now());
+        this.className = this.getClass().getName();
     }
-    public Inquiry(){};
+
+    public Inquiry() {
+    }
+
+    ;
 
     public abstract void handling();
 
