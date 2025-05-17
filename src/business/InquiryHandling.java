@@ -78,22 +78,10 @@ public class InquiryHandling extends Thread {
         // הדפסת פרטי הפנייה
         System.out.println(currentInquiry.getClass().getSimpleName() +
                 " inquiry code: " + currentInquiry.getCode() +
-                ", estimated time: " + estimationTime + "s" +
-                " service representative: " + nameRepresentative(InquiryManager.getInstance()));
+                ", estimated time: " + estimationTime + "s");
 
         HandleFiles handleFiles = new HandleFiles();
         handleFiles.deleteFile("", this.currentInquiry);
-    }
-
-    public String nameRepresentative(InquiryManager inquiryManager) {
-        Map<Inquiry, ServiceRepresentative> map = inquiryManager.getRepresentativeInquiryMap();
-        String name = null;
-        for (var entry : map.entrySet()) {
-            if (entry.getKey().getCode().equals(currentInquiry.getCode())) {
-                name = entry.getValue().getName();
-            }
-        }
-        return name;
     }
 
     public void MoveToHistory() {
