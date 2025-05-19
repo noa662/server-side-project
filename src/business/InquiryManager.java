@@ -5,6 +5,7 @@ import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -14,7 +15,7 @@ public class InquiryManager {
     private static InquiryManager instance;
     private static final BlockingQueue<Inquiry> q;
     private static final BlockingQueue<ServiceRepresentative> representativeQ;
-    private static final Map<Inquiry,ServiceRepresentative> representativeInquiryMap;
+    private static final Map<Inquiry, ServiceRepresentative> representativeInquiryMap;
     private ExecutorService executer;
     private boolean running = true;
 
@@ -22,10 +23,14 @@ public class InquiryManager {
         q = new LinkedBlockingQueue<>();
         representativeQ = new LinkedBlockingQueue<>();
         representativeInquiryMap = new HashMap<>();
-        loadInquiries();
+        try {
+            loadInquiries();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void loadInquiries() {
+    private static void loadInquiries() throws FileNotFoundException {
         File directory = new File("Inquiries");
         if (!directory.exists())
             directory.mkdir();
@@ -35,7 +40,7 @@ public class InquiryManager {
                 return;
             HandleFiles handleFiles = new HandleFiles();
             for (File f : files) {
-                IForSaving newInquiry = handleFiles.readFile(f);
+                IForSaving newInquiry = (IForSaving) handleFiles.readCsv(f.getAbsolutePath());
                 nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
                 addInquiryToQueue((Inquiry) newInquiry);
             }
@@ -100,8 +105,18 @@ public class InquiryManager {
 
     public static void addInquiryToQueue(Inquiry newInquiry) {
         newInquiry.setCode(nextCodeVal);
-        HandleFiles handleFiles=new HandleFiles();
-        handleFiles.saveFile("inquirymanagement_rs/Inquiries",(IForSaving) newInquiry);
+        HandleFiles handleFiles = new HandleFiles();
+        String filePath = "";
+        if (newInquiry instanceof Complaint)
+            filePath = "Inquiries/Complaint";
+        if (newInquiry instanceof Request)
+            filePath = "Inquiries/Request";
+        if (newInquiry instanceof Question)
+            filePath = "Inquiries/Question";
+        filePath += "/" + newInquiry.getCode();
+       boolean flag= handleFiles.saveCSV(newInquiry, filePath);
+        System.out.println(flag);
+       if(flag)
         q.add(newInquiry);
     }
 
@@ -134,7 +149,7 @@ public class InquiryManager {
         }
     }
 
-    public Map<Inquiry,ServiceRepresentative> getRepresentativeInquiryMap(){
+    public Map<Inquiry, ServiceRepresentative> getRepresentativeInquiryMap() {
         return representativeInquiryMap;
     }
 
@@ -146,22 +161,22 @@ public class InquiryManager {
         return representativeInquiryMap.get(inquiry);
     }
 
-    public Inquiry getInquiryByRepresentative(ServiceRepresentative representative){
-        for(Map.Entry<Inquiry,ServiceRepresentative> entry : representativeInquiryMap.entrySet()){
-            if(entry.getValue().equals(representative))
+    public Inquiry getInquiryByRepresentative(ServiceRepresentative representative) {
+        for (Map.Entry<Inquiry, ServiceRepresentative> entry : representativeInquiryMap.entrySet()) {
+            if (entry.getValue().equals(representative))
 
                 return entry.getKey();
         }
         return null;
     }
-    public void removeInquiry(int id) {
-        Map<Inquiry, ServiceRepresentative> map = getRepresentativeInquiryMap();
-        for (var entry : map.entrySet()) {
-            if(entry.getValue().getCode()==id){
-                entry.getKey().setStatus(InquiryStatus.CANCELED);
-            }
-        }
-        map.remove(id);
-        //MoveToHistory();
-    }
+//    public void removeInquiry(int id) {
+//        Map<Inquiry, ServiceRepresentative> map = getRepresentativeInquiryMap();
+//        for (var entry : map.entrySet()) {
+//            if(entry.getValue().getCode()==id){
+//                entry.getKey().setStatus(InquiryStatus.CANCELED);
+//            }
+//        }
+//        map.remove(id);
+//        //MoveToHistory();
+//    }
 }

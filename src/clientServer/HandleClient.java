@@ -22,6 +22,7 @@ public class HandleClient extends Thread {
             in =new ObjectInputStream(clientSocket.getInputStream());
             RequestData request = (RequestData) in.readObject();
             out=new ObjectOutputStream(clientSocket.getOutputStream());
+            out.flush();
             switch (request.getAction()) {
                 case ADD_INQUIRY: {
                     try {
@@ -48,12 +49,14 @@ public class HandleClient extends Thread {
                     out =new ObjectOutputStream(clientSocket.getOutputStream());
                     out.writeObject(new ResponseData(ResponseStatus.FAIL, "no such action", null));
                     in.close();
-                    //out.flush();
                     out.close();
-                  clientSocket.close();
+                    clientSocket.close();
 
                 }
             }
+            out.close();
+            in.close();
+            clientSocket.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
