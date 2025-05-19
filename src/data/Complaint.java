@@ -39,7 +39,7 @@ public class Complaint extends Inquiry {
 
     @Override
     public String getData() {
-        return className+","+code+","+description+","+assignedBranch;
+        return creationDate+","+ className+","+code+","+description+","+assignedBranch;
     }
 
     @Override

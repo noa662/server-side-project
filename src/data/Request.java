@@ -26,7 +26,7 @@ public class Request extends Inquiry {
 
     @Override
     public String getData() {
-        return className+","+code+","+description;
+        return creationDate+","+ className+","+code+","+description;
     }
 
     @Override
