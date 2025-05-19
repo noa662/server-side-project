@@ -20,6 +20,9 @@ public class HandleFiles {
 
             File file = new File(folder, forSaving.getFileName() + ".txt");
 
+            if(file.exists())//אם הקובץ קיים (הפנייה לא הספיקה להיטפל והמערכת נסגרה)
+                return;
+
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
                 writer.write(forSaving.getData());
             }
@@ -154,8 +157,6 @@ public class HandleFiles {
     //בלי GPT(!)
     public Object createInstance(String[]values,int index){
         try {
-            if(values.length<=index|| values[index]==null)
-                return null;
             Class clazz=Class.forName(values[index++]);
             Object instance=clazz.getConstructor().newInstance();
             while (!clazz.equals(Object.class)) {
@@ -195,29 +196,6 @@ public class HandleFiles {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public Object readCsv2(String filePath) throws FileNotFoundException {
-        File file = new File(filePath);
-
-        // אם הקובץ לא קיים, צור אותו.
-        if (!file.exists()) {
-            try {
-                file.createNewFile(); // יצירת הקובץ החדש
-                // אפשר גם להוסיף מנגנון ברירת מחדל או לא להחזיר null
-                return null; // או ליצור אובייקט חדש
-            } catch (IOException e) {
-                throw new RuntimeException("שגיאה ביצירת הקובץ: " + filePath, e);
-            }
-        }
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line = reader.readLine();
-            String[] values = line.split(",");
-            return createInstance(values, 0);
-        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

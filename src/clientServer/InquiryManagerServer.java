@@ -41,6 +41,5 @@ public class InquiryManagerServer {
     public static void main(String[] args) {
         InquiryManagerServer server=new InquiryManagerServer();
         server.start();
-        server.stop();
     }
 }

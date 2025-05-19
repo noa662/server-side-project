@@ -29,47 +29,18 @@ public class InquiryManager {
             e.printStackTrace();
         }
     }
+
     private static void loadInquiries() throws FileNotFoundException {
         File directory = new File("Inquiries");
         if (!directory.exists())
             directory.mkdir();
-
-        for (File dir : directory.listFiles()) {
-            File[] files = dir.listFiles();
-            if (files == null)
-                return;
-
-            HandleFiles handleFiles = new HandleFiles();
-
-            for (File f : files) {
-                if (f.length() == 0) { // בדיקה אם הקובץ ריק
-                    System.out.println("Skipping empty file: " + f.getAbsolutePath());
-                    continue; // דילוג על קבצים ריקים
-                }
-
-                try {
-                    IForSaving newInquiry = (IForSaving) handleFiles.readCsv(f.getAbsolutePath());
-                    nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
-                    addInquiryToQueue((Inquiry) newInquiry);
-                } catch (Exception e) {
-                    System.out.println("Failed to load file " + f.getAbsolutePath() + ": " + e.getMessage());
-                    // אם רוצים, אפשר להמשיך עם הקבצים האחרים
-                }
-            }
-        }
-    }
-
-    private static void loadInquiries2() throws FileNotFoundException {
-        File directory = new File("Inquiries");
-        if (!directory.exists())
-            directory.mkdir();
         for (File dir : directory.listFiles()) {
             File[] files = dir.listFiles();
             if (files == null)
                 return;
             HandleFiles handleFiles = new HandleFiles();
             for (File f : files) {
-                IForSaving newInquiry = (IForSaving) handleFiles.readCsv(f.getAbsolutePath());
+                IForSaving newInquiry = handleFiles.readFile(f);
                 nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
                 addInquiryToQueue((Inquiry) newInquiry);
             }
@@ -132,50 +103,12 @@ public class InquiryManager {
         }
     }
 
+
+
     public static void addInquiryToQueue(Inquiry newInquiry) {
-        newInquiry.setCode(nextCodeVal++);
-        HandleFiles handleFiles = new HandleFiles();
-
-        String folderName = "";
-        if (newInquiry instanceof Complaint)
-            folderName = "Complaint";
-        else if (newInquiry instanceof Request)
-            folderName = "Request";
-        else if (newInquiry instanceof Question)
-            folderName = "Question";
-
-        String dirPath = "Inquiries/" + folderName;
-
-        // יצירת התיקייה אם לא קיימת
-        File dir = new File(dirPath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        String filePath = dirPath + "/" + newInquiry.getCode() + ".csv"; // לדוגמה עם סיומת
-
-        boolean flag = handleFiles.saveCSV(newInquiry, filePath);
-        System.out.println("Save result: " + flag);
-
-        if (flag)
-            q.add(newInquiry);
-    }
-
-
-    public static void addInquiryToQueue2(Inquiry newInquiry) {
         newInquiry.setCode(nextCodeVal);
         HandleFiles handleFiles = new HandleFiles();
-        String filePath = "";
-        if (newInquiry instanceof Complaint)
-            filePath = "Inquiries/Complaint";
-        if (newInquiry instanceof Request)
-            filePath = "Inquiries/Request";
-        if (newInquiry instanceof Question)
-            filePath = "Inquiries/Question";
-        filePath += "/" + newInquiry.getCode();
-        boolean flag = handleFiles.saveCSV(newInquiry, filePath);
-        System.out.println(flag);
-        if (flag)
+        handleFiles.saveFile("Inquiries",newInquiry);
             q.add(newInquiry);
     }
 
@@ -200,7 +133,7 @@ public class InquiryManager {
                 Inquiry inquiry = q.poll(1, TimeUnit.SECONDS);
                 InquiryHandling inquiryHandling = new InquiryHandling(inquiry);
                 if (inquiry != null)//אם היתה פנייה זמינה בתור
-                    executer.submit(inquiryHandling);
+                     executer.submit(inquiryHandling);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
                 break;

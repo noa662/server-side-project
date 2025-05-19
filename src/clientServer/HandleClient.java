@@ -52,17 +52,24 @@ public class HandleClient extends Thread {
                 default: {
                     out = new ObjectOutputStream(clientSocket.getOutputStream());
                     out.writeObject(new ResponseData(ResponseStatus.FAIL, "no such action", null));
-                    in.close();
-                    out.close();
-                    clientSocket.close();
-
+                    closeConnection();
                 }
+                closeConnection();
             }
-            out.close();
-            in.close();
-            clientSocket.close();
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            in.close();
+            out.close();
+            clientSocket.close();
+            System.out.println("connection to the server was closed.");
+        } catch (IOException e) {
+            System.out.println("error close the connection " + e.getMessage());
         }
     }
 
