@@ -37,15 +37,13 @@ public abstract class Inquiry implements IForSaving, Serializable {
     }
 
     public Inquiry(String description) {
-
         fillDataByUser(description, LocalDateTime.now());
         this.className = this.getClass().getName();
     }
 
     public Inquiry() {
+        this.className=this.getClass().getName();
     }
-
-    ;
 
     public abstract void handling();
 
@@ -72,4 +70,5 @@ public abstract class Inquiry implements IForSaving, Serializable {
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
+
 }
