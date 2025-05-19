@@ -21,13 +21,12 @@ public class InquiryManagerServer {
                Socket clientSocket = myServer.accept();
                HandleClient handleClient = new HandleClient(clientSocket);
                System.out.println("client connected" + clientSocket.getInetAddress());
-               // handleClient.start();
                Thread thread = new Thread(handleClient);
                thread.start();
-               //clientSocket.close();
            }
        } catch (IOException e) {
            e.printStackTrace();
+           stop();
        }
    }
 

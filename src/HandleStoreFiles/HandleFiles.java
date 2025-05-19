@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HandleFiles {
-    //public static String FOLDER= "inquirymanagement_rs/Inquiries";
 
     public void saveFile(String mainFolder,IForSaving forSaving) {
         try {
@@ -20,6 +19,9 @@ public class HandleFiles {
             }
 
             File file = new File(folder, forSaving.getFileName() + ".txt");
+
+            if(file.exists())//אם הקובץ קיים (הפנייה לא הספיקה להיטפל והמערכת נסגרה)
+                return;
 
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
                 writer.write(forSaving.getData());
@@ -102,6 +104,8 @@ public class HandleFiles {
     }
     //בלי GPT(!)
     public StringBuilder getCSVDataRecursive(Object obj){
+        if(obj==null)
+            return new StringBuilder("");
         StringBuilder result= new StringBuilder();
         try {
             Class clazz=obj.getClass();

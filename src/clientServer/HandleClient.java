@@ -2,6 +2,7 @@ package clientServer;
 
 import data.Inquiry;
 import business.InquiryManager;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -18,10 +19,14 @@ public class HandleClient extends Thread {
     public void HandleClientRequest() {
 
         try {
-
-            in =new ObjectInputStream(clientSocket.getInputStream());
+            try {
+                out = new ObjectOutputStream(clientSocket.getOutputStream());
+                out.flush();
+                in = new ObjectInputStream(clientSocket.getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             RequestData request = (RequestData) in.readObject();
-            out=new ObjectOutputStream(clientSocket.getOutputStream());
             switch (request.getAction()) {
                 case ADD_INQUIRY: {
                     try {
@@ -45,17 +50,26 @@ public class HandleClient extends Thread {
                 }
 
                 default: {
-                    out =new ObjectOutputStream(clientSocket.getOutputStream());
+                    out = new ObjectOutputStream(clientSocket.getOutputStream());
                     out.writeObject(new ResponseData(ResponseStatus.FAIL, "no such action", null));
-                    in.close();
-                    //out.flush();
-                    out.close();
-                  clientSocket.close();
-
+                    closeConnection();
                 }
+                closeConnection();
             }
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            in.close();
+            out.close();
+            clientSocket.close();
+            System.out.println("connection to the server was closed.");
+        } catch (IOException e) {
+            System.out.println("error close the connection " + e.getMessage());
         }
     }
 

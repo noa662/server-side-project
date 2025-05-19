@@ -5,6 +5,7 @@ import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -14,7 +15,7 @@ public class InquiryManager {
     private static InquiryManager instance;
     private static final BlockingQueue<Inquiry> q;
     private static final BlockingQueue<ServiceRepresentative> representativeQ;
-    private static final Map<Inquiry,ServiceRepresentative> representativeInquiryMap;
+    private static final Map<Inquiry, ServiceRepresentative> representativeInquiryMap;
     private ExecutorService executer;
     private boolean running = true;
 
@@ -22,10 +23,14 @@ public class InquiryManager {
         q = new LinkedBlockingQueue<>();
         representativeQ = new LinkedBlockingQueue<>();
         representativeInquiryMap = new HashMap<>();
-        loadInquiries();
+        try {
+            loadInquiries();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void loadInquiries() {
+    private static void loadInquiries() throws FileNotFoundException {
         File directory = new File("Inquiries");
         if (!directory.exists())
             directory.mkdir();
@@ -98,11 +103,13 @@ public class InquiryManager {
         }
     }
 
+
+
     public static void addInquiryToQueue(Inquiry newInquiry) {
         newInquiry.setCode(nextCodeVal);
-        HandleFiles handleFiles=new HandleFiles();
-        handleFiles.saveFile("inquirymanagement_rs/Inquiries",(IForSaving) newInquiry);
-        q.add(newInquiry);
+        HandleFiles handleFiles = new HandleFiles();
+        handleFiles.saveFile("Inquiries",newInquiry);
+            q.add(newInquiry);
     }
 
     public static BlockingQueue<Inquiry> getAllInquiries() {
@@ -126,7 +133,7 @@ public class InquiryManager {
                 Inquiry inquiry = q.poll(1, TimeUnit.SECONDS);
                 InquiryHandling inquiryHandling = new InquiryHandling(inquiry);
                 if (inquiry != null)//אם היתה פנייה זמינה בתור
-                    executer.submit(inquiryHandling);
+                     executer.submit(inquiryHandling);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
                 break;
@@ -134,7 +141,7 @@ public class InquiryManager {
         }
     }
 
-    public Map<Inquiry,ServiceRepresentative> getRepresentativeInquiryMap(){
+    public Map<Inquiry, ServiceRepresentative> getRepresentativeInquiryMap() {
         return representativeInquiryMap;
     }
 
@@ -146,22 +153,22 @@ public class InquiryManager {
         return representativeInquiryMap.get(inquiry);
     }
 
-    public Inquiry getInquiryByRepresentative(ServiceRepresentative representative){
-        for(Map.Entry<Inquiry,ServiceRepresentative> entry : representativeInquiryMap.entrySet()){
-            if(entry.getValue().equals(representative))
+    public Inquiry getInquiryByRepresentative(ServiceRepresentative representative) {
+        for (Map.Entry<Inquiry, ServiceRepresentative> entry : representativeInquiryMap.entrySet()) {
+            if (entry.getValue().equals(representative))
 
                 return entry.getKey();
         }
         return null;
     }
-    public void removeInquiry(int id) {
-        Map<Inquiry, ServiceRepresentative> map = getRepresentativeInquiryMap();
-        for (var entry : map.entrySet()) {
-            if(entry.getValue().getCode()==id){
-                entry.getKey().setStatus(InquiryStatus.CANCELED);
-            }
-        }
-        map.remove(id);
-        //MoveToHistory();
-    }
+//    public void removeInquiry(int id) {
+//        Map<Inquiry, ServiceRepresentative> map = getRepresentativeInquiryMap();
+//        for (var entry : map.entrySet()) {
+//            if(entry.getValue().getCode()==id){
+//                entry.getKey().setStatus(InquiryStatus.CANCELED);
+//            }
+//        }
+//        map.remove(id);
+//        //MoveToHistory();
+//    }
 }
