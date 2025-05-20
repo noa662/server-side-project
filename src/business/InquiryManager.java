@@ -6,6 +6,9 @@ import HandleStoreFiles.IForSaving;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -104,15 +107,15 @@ public class InquiryManager {
     }
 
 
-
     public static void addInquiryToQueue(Inquiry newInquiry,boolean isNew) {
         if(isNew){
             newInquiry.setCode(nextCodeVal);
             nextCodeVal++;
         }
+        
         HandleFiles handleFiles = new HandleFiles();
-        handleFiles.saveFile("Inquiries",newInquiry);
-            q.add(newInquiry);
+        handleFiles.saveFile("Inquiries", newInquiry);
+        q.add(newInquiry);
     }
 
     public static BlockingQueue<Inquiry> getAllInquiries() {
@@ -136,7 +139,7 @@ public class InquiryManager {
                 Inquiry inquiry = q.poll(1, TimeUnit.SECONDS);
                 InquiryHandling inquiryHandling = new InquiryHandling(inquiry);
                 if (inquiry != null)//אם היתה פנייה זמינה בתור
-                     executer.submit(inquiryHandling);
+                    executer.submit(inquiryHandling);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
                 break;
@@ -144,7 +147,7 @@ public class InquiryManager {
         }
     }
 
-    public Map<Inquiry, ServiceRepresentative> getRepresentativeInquiryMap() {
+    public static Map<Inquiry, ServiceRepresentative> getRepresentativeInquiryMap() {
         return representativeInquiryMap;
     }
 
@@ -164,14 +167,57 @@ public class InquiryManager {
         }
         return null;
     }
-//    public void removeInquiry(int id) {
-//        Map<Inquiry, ServiceRepresentative> map = getRepresentativeInquiryMap();
-//        for (var entry : map.entrySet()) {
-//            if(entry.getValue().getCode()==id){
-//                entry.getKey().setStatus(InquiryStatus.CANCELED);
-//            }
-//        }
-//        map.remove(id);
-//        //MoveToHistory();
-//    }
+
+    public static void moveToHistory(int id) throws Exception {
+        String path = "Inquiries";
+        String fileName = String.valueOf(id);
+        String fileName2 = id + ".csv";
+        File folder = new File(path);
+        File[] files = folder.listFiles();
+        File history = new File("History");
+        if (!history.exists()) {
+            history.mkdir();
+        }
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    File[] files1 = file.listFiles();
+                    if (files1 != null) {
+                        for (File f : files1) {
+                            if (f.isFile() && (f.getName().equals(fileName)) || (f.getName().equals(fileName2))) {
+                                Path path1 = f.toPath();
+                                Path path2 = new File(history, f.getName()).toPath();
+                                try {
+                                    Files.move(path1, path2);
+                                } catch (IOException e) {
+                                    throw new Exception("Error move file to history");
+                                }
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            throw new Exception("Inquiry not found");
+        }
+    }
+
+    public static void removeInquiry(int id) throws Exception {
+        Map<Inquiry, ServiceRepresentative> map = getRepresentativeInquiryMap();
+        Inquiry inq = null;
+        boolean found = false;
+        for (var entry : map.entrySet()) {
+            if (entry.getValue().getCode() == id) {
+                entry.getKey().setStatus(InquiryStatus.CANCELED);
+                inq = entry.getKey();
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            throw new Exception("Inquiry num. " + id + " not found");
+        }
+        map.remove(inq);
+        moveToHistory(id);
+    }
 }

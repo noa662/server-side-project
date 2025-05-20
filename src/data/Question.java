@@ -31,7 +31,7 @@ public class Question extends Inquiry{
 
     @Override
     public String getData() {
-        return creationDate+","+className+","+code+","+description;
+        return creationDate+","+ className+","+code+","+description;
     }
 
     @Override
