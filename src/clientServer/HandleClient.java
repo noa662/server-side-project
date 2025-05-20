@@ -49,6 +49,18 @@ public class HandleClient extends Thread {
                     break;
                 }
 
+                case CANCLE_INQUIRY: {
+                    try {
+                        int code = (int) request.getParameters()[0];
+                        InquiryManager.removeInquiry(code);
+                        out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "Your request has been canceled.", null));
+                        out.flush();
+                    } catch (Exception e) {
+                        out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
+                    }
+                    break;
+                }
+
                 default: {
                     out = new ObjectOutputStream(clientSocket.getOutputStream());
                     out.writeObject(new ResponseData(ResponseStatus.FAIL, "no such action", null));
