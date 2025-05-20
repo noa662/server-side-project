@@ -30,7 +30,7 @@ public class HandleClient extends Thread {
             switch (request.getAction()) {
                 case ADD_INQUIRY: {
                     try {
-                        InquiryManager.addInquiryToQueue((Inquiry) request.getParameters()[0]);
+                        InquiryManager.addInquiryToQueue((Inquiry) request.getParameters()[0],true);
                         out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "Your request has been successfully received.", null));
                         out.flush();
                     } catch (Exception e) {
