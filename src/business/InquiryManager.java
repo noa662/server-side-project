@@ -79,6 +79,36 @@ public class InquiryManager {
         }
         return count;
     }
+    public static int getRepresentativeInquiries(int codeRepresentative) {
+        int count =0;
+        File history = new File("History");
+        if (!history.exists()) {
+            return count;
+        }
+        File[] files = history.listFiles();
+        if (files == null)
+            return count;
+        for (File f : files) {
+            if (f.isFile()) {
+                try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        String[] parts = line.split(",");
+                        if (parts.length > 3) {
+                            String stringCode = parts[3];
+                            int code = Integer.parseInt(stringCode);
+                            if(code ==codeRepresentative)
+                               count++;
+                            }
+                        }
+                    } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return count;
+    }
+
 
     public static InquiryManager getInstance() {
         if (instance == null)
