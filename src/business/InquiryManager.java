@@ -112,7 +112,7 @@ public class InquiryManager {
             newInquiry.setCode(nextCodeVal);
             nextCodeVal++;
         }
-        
+
         HandleFiles handleFiles = new HandleFiles();
         handleFiles.saveFile("Inquiries", newInquiry);
         q.add(newInquiry);
