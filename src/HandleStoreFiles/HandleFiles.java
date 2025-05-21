@@ -72,36 +72,25 @@ public class HandleFiles {
         }
     }
 
-    public IForSaving readFile(File f){
-        try {
-            BufferedReader br=new BufferedReader(new FileReader(f));
-            String line= br.readLine();
-            List<String> values= Arrays.asList(line.split(","));
-            String  className=values.get(0);
-            IForSaving inquiry=null;
-            if(!className.substring(5).equals("Complaint"))
-                 inquiry=(IForSaving) Class.forName(values.get(0)).getConstructor().newInstance();
-             else
-                 inquiry=(IForSaving) Class.forName(values.get(0)).getConstructor().newInstance();
+    public IForSaving readFile(File f) {
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line = br.readLine();
+            if (line == null) throw new RuntimeException("Empty file: " + f.getName());
+
+            List<String> values = Arrays.asList(line.split(","));
+            String className = values.get(1);
+
+            Class<?> clazz = Class.forName(className);
+            IForSaving inquiry = (IForSaving) clazz.getConstructor().newInstance();
+
             inquiry.parseFromFile(values);
-            br.close();
             return inquiry;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read file: " + f.getName(), e);
         }
     }
+
     //בלי GPT(!)
     public StringBuilder getCSVDataRecursive(Object obj){
         if(obj==null)

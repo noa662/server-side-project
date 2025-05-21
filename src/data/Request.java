@@ -2,6 +2,7 @@ package data;
 
 import HandleStoreFiles.IForSaving;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Request extends Inquiry {
@@ -31,9 +32,10 @@ public class Request extends Inquiry {
 
     @Override
     public void parseFromFile(List<String> values) {
-        className=values.get(0);
-        code=Integer.parseInt(values.get(1));
-        description=values.get(2);
+        creationDate= LocalDateTime.parse(values.get(0));
+        className=values.get(1);
+        code=Integer.parseInt(values.get(2));
+        description=values.get(3);
     }
 
 }

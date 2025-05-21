@@ -30,7 +30,7 @@ public class HandleClient extends Thread {
             switch (request.getAction()) {
                 case ADD_INQUIRY: {
                     try {
-                        InquiryManager.addInquiryToQueue((Inquiry) request.getParameters()[0]);
+                        InquiryManager.addInquiryToQueue((Inquiry) request.getParameters()[0],true);
                         out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "Your request has been successfully received.", null));
                         out.flush();
                     } catch (Exception e) {
@@ -61,13 +61,33 @@ public class HandleClient extends Thread {
                     break;
                 }
 
+                case GET_MONTHYFILESTATS: {
+                    break;
+                }
+
+                case GET_REPRESENTATIVE_INQUIRIES: {
+                    break;
+                }
+
+                case GET_MAP: {
+                    break;
+                }
+
+                case GET_REPRESENTATIVE: {
+                    break;
+                }
+
+                case GET_STATUS: {
+                    break;
+                }
+
                 default: {
                     out = new ObjectOutputStream(clientSocket.getOutputStream());
                     out.writeObject(new ResponseData(ResponseStatus.FAIL, "no such action", null));
                     closeConnection();
                 }
-                closeConnection();
             }
+            closeConnection();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

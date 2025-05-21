@@ -36,16 +36,16 @@ public class InquiryManager {
     private static void loadInquiries() throws FileNotFoundException {
         File directory = new File("Inquiries");
         if (!directory.exists())
-            directory.mkdir();
+            return;
         for (File dir : directory.listFiles()) {
             File[] files = dir.listFiles();
             if (files == null)
-                return;
+                continue;
             HandleFiles handleFiles = new HandleFiles();
             for (File f : files) {
                 IForSaving newInquiry = handleFiles.readFile(f);
                 nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
-                addInquiryToQueue((Inquiry) newInquiry);
+                addInquiryToQueue((Inquiry) newInquiry,false);
             }
         }
     }
@@ -102,13 +102,17 @@ public class InquiryManager {
                 stop();
                 break;
             }
-            addInquiryToQueue(newInquiry);
+            addInquiryToQueue(newInquiry,true);
         }
     }
 
 
-    public static void addInquiryToQueue(Inquiry newInquiry) {
-        newInquiry.setCode(nextCodeVal);
+    public static void addInquiryToQueue(Inquiry newInquiry,boolean isNew) {
+        if(isNew){
+            newInquiry.setCode(nextCodeVal);
+            nextCodeVal++;
+        }
+
         HandleFiles handleFiles = new HandleFiles();
         handleFiles.saveFile("Inquiries", newInquiry);
         q.add(newInquiry);
