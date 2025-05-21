@@ -27,15 +27,17 @@ public class Request extends Inquiry {
 
     @Override
     public String getData() {
-        return creationDate+","+ className+","+code+","+description;
+        return creationDate+","+ className+","+status+","+codeRepresentative+","+code+","+description;
     }
 
     @Override
     public void parseFromFile(List<String> values) {
         creationDate= LocalDateTime.parse(values.get(0));
         className=values.get(1);
-        code=Integer.parseInt(values.get(2));
-        description=values.get(3);
+        status= InquiryStatus.valueOf(values.get(2));
+        codeRepresentative= Integer.parseInt(values.get(3));
+        code=Integer.parseInt(values.get(4));
+        description=values.get(5);
     }
 
 }
