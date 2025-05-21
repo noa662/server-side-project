@@ -62,6 +62,13 @@ public class HandleClient extends Thread {
                 }
 
                 case GET_MONTHYFILESTATS: {
+                    try {
+                        int stats = InquiryManager.GetMonthlyFileStats((int)request.getParameters()[0]);
+                        out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "There are inquiries for the month: ", stats));
+                        out.flush();
+                    }catch (Exception e) {
+                        out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
+                    }
                     break;
                 }
 

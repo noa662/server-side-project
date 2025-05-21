@@ -4,11 +4,11 @@ import data.*;
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -48,6 +48,36 @@ public class InquiryManager {
                 addInquiryToQueue((Inquiry) newInquiry,false);
             }
         }
+    }
+    public static int GetMonthlyFileStats(int month){
+        int count =0;
+        File history = new File("History");
+        if (!history.exists()) {
+            return count;
+        }
+        File[] files = history.listFiles();
+        if (files == null)
+            return count;
+        for (File f : files) {
+            if (f.isFile()) {
+                try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        String[] parts = line.split(",");
+                        if (parts.length > 0) {
+                            String date = parts[0];
+                            LocalDateTime localDateTime = LocalDateTime.parse(date);
+                            if (localDateTime.getMonth() == LocalDate.now().getMonth()) {
+                                count++;
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return count;
     }
 
     public static InquiryManager getInstance() {
