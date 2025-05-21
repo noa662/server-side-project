@@ -213,7 +213,8 @@ public class InquiryManager {
         if (!found) {
             throw new Exception("Inquiry num. " + id + " not found");
         }
-        map.remove(inq);
+        ServiceRepresentative sr = map.remove(inq);
         moveToHistory(id);
+        InquiryManager.getInstance().getRepresentativeQ().add(sr);
     }
 }
