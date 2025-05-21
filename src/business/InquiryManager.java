@@ -45,7 +45,7 @@ public class InquiryManager {
             for (File f : files) {
                 IForSaving newInquiry = handleFiles.readFile(f);
                 nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
-                addInquiryToQueue((Inquiry) newInquiry,false);
+                addInquiryToQueue((Inquiry) newInquiry, false);
             }
         }
     }
@@ -102,13 +102,13 @@ public class InquiryManager {
                 stop();
                 break;
             }
-            addInquiryToQueue(newInquiry,true);
+            addInquiryToQueue(newInquiry, true);
         }
     }
 
 
-    public static void addInquiryToQueue(Inquiry newInquiry,boolean isNew) {
-        if(isNew){
+    public static void addInquiryToQueue(Inquiry newInquiry, boolean isNew) {
+        if (isNew) {
             newInquiry.setCode(nextCodeVal);
             nextCodeVal++;
         }
@@ -171,7 +171,7 @@ public class InquiryManager {
     public static void moveToHistory(int id) throws Exception {
         String path = "Inquiries";
         String fileName = String.valueOf(id);
-        String fileName2 = id + ".csv";
+        String fileName2 = id + ".txt";
         File folder = new File(path);
         File[] files = folder.listFiles();
         File history = new File("History");
@@ -180,8 +180,18 @@ public class InquiryManager {
         }
         if (files != null) {
             for (File file : files) {
+                System.out.println("Checking subdir: " + file.getName());
+                if (file.isDirectory()) {
+                    System.out.println("Entering directory: " + file.getAbsolutePath());
+                } else {
+                    System.out.println(file.getName() + " is not a directory");
+                }
                 if (file.isDirectory()) {
                     File[] files1 = file.listFiles();
+                    if (files1 == null) {
+                        System.out.println("Could not read contents of: " + file.getAbsolutePath());
+                        continue;
+                    }
                     if (files1 != null) {
                         for (File f : files1) {
                             if (f.isFile() && (f.getName().equals(fileName)) || (f.getName().equals(fileName2))) {
@@ -207,7 +217,7 @@ public class InquiryManager {
         Inquiry inq = null;
         boolean found = false;
         for (var entry : map.entrySet()) {
-            if (entry.getValue().getCode() == id) {
+            if (entry.getKey().getCode() == id) {
                 entry.getKey().setStatus(InquiryStatus.CANCELED);
                 inq = entry.getKey();
                 found = true;
