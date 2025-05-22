@@ -49,8 +49,9 @@ public class InquiryManager {
             }
         }
     }
-    public static int GetMonthlyFileStats(int month){
-        int count =0;
+
+    public static int GetMonthlyFileStats(int month) {
+        int count = 0;
         File history = new File("History");
         if (!history.exists()) {
             return count;
@@ -79,8 +80,9 @@ public class InquiryManager {
         }
         return count;
     }
+
     public static int getRepresentativeInquiries(int codeRepresentative) {
-        int count =0;
+        int count = 0;
         File history = new File("History");
         if (!history.exists()) {
             return count;
@@ -97,11 +99,11 @@ public class InquiryManager {
                         if (parts.length > 3) {
                             String stringCode = parts[3];
                             int code = Integer.parseInt(stringCode);
-                            if(code ==codeRepresentative)
-                               count++;
-                            }
+                            if (code == codeRepresentative)
+                                count++;
                         }
-                    } catch (IOException e) {
+                    }
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -222,17 +224,12 @@ public class InquiryManager {
         File folder = new File(path);
         File[] files = folder.listFiles();
         File history = new File("History");
+        HandleFiles handleFiles = new HandleFiles();
         if (!history.exists()) {
             history.mkdir();
         }
         if (files != null) {
             for (File file : files) {
-                System.out.println("Checking subdir: " + file.getName());
-                if (file.isDirectory()) {
-                    System.out.println("Entering directory: " + file.getAbsolutePath());
-                } else {
-                    System.out.println(file.getName() + " is not a directory");
-                }
                 if (file.isDirectory()) {
                     File[] files1 = file.listFiles();
                     if (files1 == null) {
@@ -241,7 +238,12 @@ public class InquiryManager {
                     }
                     if (files1 != null) {
                         for (File f : files1) {
-                            if (f.isFile() && (f.getName().equals(fileName)) || (f.getName().equals(fileName2))) {
+                            if (f.isFile() && (f.getName().equals(fileName) || f.getName().equals(fileName2))) {
+                                IForSaving inquiry= handleFiles.readFile(f);
+                                Inquiry inquiry1=(Inquiry)inquiry;
+                                inquiry1.setStatus(InquiryStatus.MOVEDTOHISTORY);
+                                inquiry=(IForSaving)inquiry1;
+                                handleFiles.updateFile("Inquiries", inquiry);
                                 Path path1 = f.toPath();
                                 Path path2 = new File(history, f.getName()).toPath();
                                 try {
