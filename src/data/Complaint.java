@@ -39,16 +39,18 @@ public class Complaint extends Inquiry {
 
     @Override
     public String getData() {
-        return creationDate+","+ className+","+code+","+description+","+assignedBranch;
+        return creationDate+","+ className+","+status+","+codeRepresentative+","+code+","+description+","+assignedBranch;
     }
 
     @Override
     public void parseFromFile(List<String> values) {
         creationDate= LocalDateTime.parse(values.get(0));
         className=values.get(1);
-        code=Integer.parseInt(values.get(2));
-        description=values.get(3);
-        assignedBranch=values.get(4);
+        status= InquiryStatus.valueOf(values.get(2));
+        codeRepresentative= Integer.parseInt(values.get(3));
+        code=Integer.parseInt(values.get(4));
+        description=values.get(5);
+        assignedBranch=values.get(6);
     }
 
 }

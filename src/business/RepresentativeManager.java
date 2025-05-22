@@ -21,7 +21,7 @@ public  class RepresentativeManager {
         InquiryManager inquiryManager=InquiryManager.getInstance();
         System.out.println("Here is the representative signed in the system\n" +
                 "insert the available representative today!");
-        File file=new File("Representative");
+        File file=new File("Representatives");
         if(!file.exists()){
             System.out.println("There is no representative..:(");
             return;
@@ -32,7 +32,7 @@ public  class RepresentativeManager {
         }
 
         String ans="";
-        List<String> chooses=new ArrayList<>();
+        Set<String> chooses=new HashSet<>();
         System.out.println("Insert please the available representatives:)\n" +
                 "for exit, insert 'exit' ");
         while (true){
@@ -43,39 +43,34 @@ public  class RepresentativeManager {
         }
 
         for(String i:chooses){
-            try {
             File chosenFile= Arrays.stream(file.listFiles())
-                    .filter(x->x.getName().equals(i))
+                    .filter(x->x.getName().equals(i+".txt"))
                     .findFirst().orElse(null);
-
-                FileReader fr=new FileReader(chosenFile);
-                BufferedReader br=new BufferedReader(fr);
-                String line=br.readLine();
-                ServiceRepresentative serviceRepresentative=new ServiceRepresentative(line,Integer.parseInt(i));
-                inquiryManager.getRepresentativeQ().add(serviceRepresentative);
-
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if(chosenFile==null){
+                System.out.println("You inserted invalid representative code");
+                continue;
             }
+
+                HandleFiles handleFiles=new HandleFiles();
+                ServiceRepresentative serviceRepresentative= (ServiceRepresentative) handleFiles.readFile(chosenFile);
+                inquiryManager.getRepresentativeQ().add(serviceRepresentative);
         }
     }
 
     public static void AddRepresentative(ServiceRepresentative representative){
         //שמירת הנציג בקובץ
         HandleFiles handleFiles=new HandleFiles();
-        handleFiles.saveCSV(representative,"C:\\git\\inquirymanagement_rs\\Representative");
+        handleFiles.saveFile("Representatives",representative);
     }
 
     public static void RemoveRepresentative(ServiceRepresentative representative){
         //חיפוש הקובץ המתאים ומחיקת הנציג
         HandleFiles handleFiles=new HandleFiles();
-        File file=new File("C:\\git\\inquirymanagement_rs\\Representative");
+        File file=new File("Representatives");
         if(!file.exists()){
             System.out.println("There is no representative..:(");
             return;
         }
-        handleFiles.deleteCSV("C:\\git\\inquirymanagement_rs\\Representative",representative);
+        handleFiles.deleteFile("Representatives",representative);
     }
 }

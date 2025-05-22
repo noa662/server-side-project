@@ -17,6 +17,7 @@ public class InquiryManagerServer {
 
    public void start(){
        try {
+           System.out.println("in start of server");
            while (true) {
                Socket clientSocket = myServer.accept();
                HandleClient handleClient = new HandleClient(clientSocket);
@@ -39,7 +40,7 @@ public class InquiryManagerServer {
     }
 
     public static void main(String[] args) {
-        InquiryManagerServer server=new InquiryManagerServer();
-        server.start();
+//        InquiryManagerServer server=new InquiryManagerServer();
+//        server.start();
     }
 }
