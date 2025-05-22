@@ -79,9 +79,6 @@ public class InquiryHandling extends Thread {
         System.out.println(currentInquiry.getClass().getSimpleName() +
                 " inquiry code: " + currentInquiry.getCode() +
                 ", estimated time: " + estimationTime + "s");
-
-        HandleFiles handleFiles = new HandleFiles();
-        handleFiles.deleteFile("", this.currentInquiry);
     }
 
     public void MoveToHistory() {

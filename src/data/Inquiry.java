@@ -39,10 +39,12 @@ public abstract class Inquiry implements IForSaving, Serializable {
     public Inquiry(String description) {
         fillDataByUser(description, LocalDateTime.now());
         this.className = this.getClass().getName();
+        this.status=InquiryStatus.OPENED;
     }
 
     public Inquiry() {
         this.className=this.getClass().getName();
+        this.status=InquiryStatus.OPENED;
     }
 
     public abstract void handling();
