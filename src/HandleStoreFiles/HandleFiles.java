@@ -55,7 +55,11 @@ public class HandleFiles {
 
     public void updateFile(String mainFolder,IForSaving forSaving) {
         try {
-            File f = new File(mainFolder,forSaving.getFolderName());
+            File f;
+            if(mainFolder.equals(forSaving.getFolderName()))
+                f = new File(forSaving.getFolderName());
+            else
+                f = new File(mainFolder,forSaving.getFolderName());
             File file=new File(f,forSaving.getFileName() + ".txt");
 
             if (!file.exists()) {
@@ -64,8 +68,7 @@ public class HandleFiles {
                 return;
             }
 
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8))) {
-                writer.newLine();
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
                 writer.write(forSaving.getData());
             }
 
