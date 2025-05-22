@@ -62,8 +62,8 @@ public class InquiryManager {
         }
     }
 
-    public static int GetMonthlyFileStats(int month){
-        int count =0;
+    public static int GetMonthlyFileStats(int month) {
+        int count = 0;
         File history = new File("History");
         if (!history.exists()) {
             return count;
