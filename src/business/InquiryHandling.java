@@ -7,6 +7,8 @@ import HandleStoreFiles.IForSaving;
 import java.util.Map;
 import java.util.Random;
 
+import static business.InquiryManager.moveToHistory;
+
 public class InquiryHandling extends Thread {
     private Inquiry currentInquiry;
 
@@ -38,11 +40,11 @@ public class InquiryHandling extends Thread {
         }
     }
 
-    public void completeInquiry() {
+    public void completeInquiry() throws Exception {
         currentInquiry.setStatus(InquiryStatus.HANDLED);
         ServiceRepresentative sr = InquiryManager.getInstance().getRepresentativeInquiryMap().remove(currentInquiry);
         InquiryManager.getInstance().getRepresentativeQ().add(sr);
-        MoveToHistory();
+        moveToHistory(currentInquiry.getCode());
         currentInquiry.setStatus(InquiryStatus.MOVEDTOHISTORY);
     }
 
@@ -81,6 +83,4 @@ public class InquiryHandling extends Thread {
                 ", estimated time: " + estimationTime + "s");
     }
 
-    public void MoveToHistory() {
-    }
 }

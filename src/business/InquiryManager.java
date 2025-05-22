@@ -215,19 +215,6 @@ public class InquiryManager {
         return representativeQ;
     }
 
-    public ServiceRepresentative getRepresentativeByInquiry(Inquiry inquiry) {
-        return representativeInquiryMap.get(inquiry);
-    }
-
-    public Inquiry getInquiryByRepresentative(ServiceRepresentative representative) {
-        for (Map.Entry<Inquiry, ServiceRepresentative> entry : representativeInquiryMap.entrySet()) {
-            if (entry.getValue().equals(representative))
-
-                return entry.getKey();
-        }
-        return null;
-    }
-
     public static void moveToHistory(int id) throws Exception {
         String path = "Inquiries";
         String fileName = String.valueOf(id);
@@ -280,4 +267,5 @@ public class InquiryManager {
         map.remove(inq);
         moveToHistory(id);
     }
+
 }
