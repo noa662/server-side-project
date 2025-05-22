@@ -63,6 +63,9 @@ public class InquiryHandling extends Thread {
             return;
         }
 
+        //עידכון סטטוס פנייה
+        currentInquiry.setStatus(InquiryStatus.HANDLED);
+        //שליחה לטיפול
         currentInquiry.handling();
 
         // שחרור תהליכים נוספים אם העומס גבוה
@@ -81,6 +84,14 @@ public class InquiryHandling extends Thread {
         System.out.println(currentInquiry.getClass().getSimpleName() +
                 " inquiry code: " + currentInquiry.getCode() +
                 ", estimated time: " + estimationTime + "s");
+
+        //סגירת הפנייה
+        InquiryManager inquiryManager=InquiryManager.getInstance();
+        try {
+            inquiryManager.removeInquiry(currentInquiry.getCode());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
