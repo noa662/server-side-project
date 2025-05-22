@@ -4,11 +4,11 @@ import data.*;
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -49,6 +49,66 @@ public class InquiryManager {
             }
         }
     }
+    public static int GetMonthlyFileStats(int month){
+        int count =0;
+        File history = new File("History");
+        if (!history.exists()) {
+            return count;
+        }
+        File[] files = history.listFiles();
+        if (files == null)
+            return count;
+        for (File f : files) {
+            if (f.isFile()) {
+                try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        String[] parts = line.split(",");
+                        if (parts.length > 0) {
+                            String date = parts[0];
+                            LocalDateTime localDateTime = LocalDateTime.parse(date);
+                            if (localDateTime.getMonth() == LocalDate.now().getMonth()) {
+                                count++;
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return count;
+    }
+    public static int getRepresentativeInquiries(int codeRepresentative) {
+        int count =0;
+        File history = new File("History");
+        if (!history.exists()) {
+            return count;
+        }
+        File[] files = history.listFiles();
+        if (files == null)
+            return count;
+        for (File f : files) {
+            if (f.isFile()) {
+                try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        String[] parts = line.split(",");
+                        if (parts.length > 3) {
+                            String stringCode = parts[3];
+                            int code = Integer.parseInt(stringCode);
+                            if(code ==codeRepresentative)
+                               count++;
+                            }
+                        }
+                    } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return count;
+    }
+
 
     public static InquiryManager getInstance() {
         if (instance == null)
@@ -155,19 +215,6 @@ public class InquiryManager {
         return representativeQ;
     }
 
-    public ServiceRepresentative getRepresentativeByInquiry(Inquiry inquiry) {
-        return representativeInquiryMap.get(inquiry);
-    }
-
-    public Inquiry getInquiryByRepresentative(ServiceRepresentative representative) {
-        for (Map.Entry<Inquiry, ServiceRepresentative> entry : representativeInquiryMap.entrySet()) {
-            if (entry.getValue().equals(representative))
-
-                return entry.getKey();
-        }
-        return null;
-    }
-
     public static void moveToHistory(int id) throws Exception {
         String path = "Inquiries";
         String fileName = String.valueOf(id);
@@ -231,4 +278,5 @@ public class InquiryManager {
         moveToHistory(id);
         InquiryManager.getInstance().getRepresentativeQ().add(sr);
     }
+
 }

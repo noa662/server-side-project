@@ -62,13 +62,25 @@ public class HandleClient extends Thread {
                 }
 
                 case GET_MONTHYFILESTATS: {
+                    try {
+                        int stats = InquiryManager.GetMonthlyFileStats((int)request.getParameters()[0]);
+                        out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "There are inquiries for the month: ", stats));
+                        out.flush();
+                    }catch (Exception e) {
+                        out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
+                    }
                     break;
                 }
 
                 case GET_REPRESENTATIVE_INQUIRIES: {
-                    break;
-                }
-
+                    try {
+                        int count = InquiryManager.getRepresentativeInquiries((int)request.getParameters()[0]);
+                        out.writeObject(new ResponseData(ResponseStatus.SUCCESS, "The number of inquiries handled by the representative is: ", count));
+                        out.flush();
+                    }catch (Exception e) {
+                        out.writeObject(new ResponseData(ResponseStatus.FAIL, e.getMessage(), null));
+                    }
+                    break;                }
                 case GET_MAP: {
                     break;
                 }

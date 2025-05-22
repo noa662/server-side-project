@@ -13,7 +13,12 @@ public class HandleFiles {
 
     public void saveFile(String mainFolder,IForSaving forSaving) {
         try {
-            File folder = new File(mainFolder,forSaving.getFolderName());
+            File folder ;
+            if(mainFolder.equals(forSaving.getFolderName()))
+                folder = new File(mainFolder);
+            else
+                folder = new File(mainFolder,forSaving.getFolderName());
+
             if (!folder.exists()) {
                 folder.mkdirs();
             }
@@ -34,7 +39,11 @@ public class HandleFiles {
     }
 
     public void deleteFile(String mainFolder,IForSaving forSaving) {
-        File f = new File(mainFolder,forSaving.getFolderName());
+        File f;
+        if(mainFolder.equals(forSaving.getFolderName()))
+            f = new File(forSaving.getFolderName());
+        else
+         f = new File(mainFolder,forSaving.getFolderName());
         File file=new File(f,forSaving.getFileName() + ".txt");
         System.out.println(file.exists());
         if (file.exists() && file.delete()) {
