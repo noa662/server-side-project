@@ -281,7 +281,7 @@ public class InquiryManager {
         InquiryManager.getInstance().getRepresentativeQ().add(sr);
     }
 
-    public static InquiryStatus getStatusForInquiry(int inquiryId) {
+    public static Inquiry getInquiryFromAllFiles(int inquiryId){
         HandleFiles hf = new HandleFiles();
         String path = "Inquiries/";
         File inquiriesFolder = new File(path);
@@ -290,13 +290,19 @@ public class InquiryManager {
             for(File file :inquiriesFolder.listFiles()){
                 inquiryFile = new File(file.getPath()+"/inquiryId");
                 if(inquiryFile.exists()){
-                    return ((Inquiry) hf.readFile(inquiryFile)).getStatus();
+                    return ((Inquiry) hf.readFile(inquiryFile));
                 }
             }
         path = "History/"+inquiryId+".txt";
         inquiryFile = new File(path);
         if(!inquiryFile.exists())
             throw new RuntimeException("inquiry not found");
-        return InquiryStatus.MOVEDTOHISTORY;
+        return ((Inquiry) hf.readFile(inquiryFile));
     }
+
+    public static InquiryStatus getStatusForInquiry(int inquiryId) {
+        return getInquiryFromAllFiles(inquiryId).getStatus();
+    }
+
+
 }
