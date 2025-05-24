@@ -319,4 +319,9 @@ public class InquiryManager {
     }
 
 
+    public static int getRepresentativeForInquiry(int inquiryId) {
+        return getInquiryFromAllFiles(inquiryId).getCodeRepresentative();
+    }
+
+
 }
