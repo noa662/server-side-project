@@ -2,9 +2,12 @@ package clientServer;
 
 import data.Inquiry;
 import business.InquiryManager;
+import data.InquiryStatus;
+import data.ServiceRepresentative;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class HandleClient extends Thread {
@@ -82,14 +85,28 @@ public class HandleClient extends Thread {
                     }
                     break;                }
                 case GET_MAP: {
+                    Map<Inquiry, ServiceRepresentative> map =  InquiryManager.getRepresentativeInquiryMap();
+                    out.writeObject(new ResponseData(ResponseStatus.SUCCESS,"current inquiry representative map",map));
                     break;
                 }
 
                 case GET_REPRESENTATIVE: {
+                    try{
+                        int representativeId =InquiryManager.getRepresentativeForInquiry((int)request.getParameters()[0]);
+                        out.writeObject(new ResponseData(ResponseStatus.SUCCESS,"representative id of inquiry :" + request.getParameters()[0] ,representativeId));
+                    } catch (Exception e) {
+                        out.writeObject(new ResponseData(ResponseStatus.FAIL,e.getMessage(),null));
+                    }
                     break;
                 }
 
                 case GET_STATUS: {
+                    try{
+                        InquiryStatus status =InquiryManager.getStatusForInquiry((int)request.getParameters()[0]);
+                        out.writeObject(new ResponseData(ResponseStatus.SUCCESS,"status of inquiry :" + request.getParameters()[0] ,status));
+                    } catch (Exception e) {
+                        out.writeObject(new ResponseData(ResponseStatus.FAIL,e.getMessage(),null));
+                    }
                     break;
                 }
 
