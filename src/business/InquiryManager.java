@@ -295,4 +295,22 @@ public class InquiryManager {
         InquiryManager.getInstance().getRepresentativeQ().add(sr);
     }
 
+    public static InquiryStatus getStatusForInquiry(int inquiryId) {
+        HandleFiles hf = new HandleFiles();
+        String path = "Inquiries/";
+        File inquiriesFolder = new File(path);
+        File inquiryFile;
+        if(inquiriesFolder.exists())
+            for(File file :inquiriesFolder.listFiles()){
+                inquiryFile = new File(file.getPath()+"/inquiryId");
+                if(inquiryFile.exists()){
+                    return ((Inquiry) hf.readFile(inquiryFile)).getStatus();
+                }
+            }
+        path = "History/"+inquiryId+".txt";
+        inquiryFile = new File(path);
+        if(!inquiryFile.exists())
+            throw new RuntimeException("inquiry not found");
+        return InquiryStatus.MOVEDTOHISTORY;
+    }
 }
