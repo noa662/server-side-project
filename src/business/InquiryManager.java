@@ -35,20 +35,33 @@ public class InquiryManager {
 
     private static void loadInquiries() throws FileNotFoundException {
         File directory = new File("Inquiries");
-        if (!directory.exists())
+        File directory2 = new File("History");
+        HandleFiles handleFiles = new HandleFiles();
+
+
+        if (!directory.exists()&&!directory2.exists())
             return;
+
+        //טעינת הפניות מתיקיית Inquiries
         for (File dir : directory.listFiles()) {
             File[] files = dir.listFiles();
             if (files == null)
                 continue;
-            HandleFiles handleFiles = new HandleFiles();
             for (File f : files) {
                 IForSaving newInquiry = handleFiles.readFile(f);
                 nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
                 addInquiryToQueue((Inquiry) newInquiry, false);
             }
         }
+
+        //טעינת הפניות מקבצי History
+        for (File f : directory2.listFiles()) {
+            String name=f.getName();
+            String nameWithoutTxt=name.substring(0, name.lastIndexOf('.'));
+            nextCodeVal = Math.max(nextCodeVal, Integer.parseInt(nameWithoutTxt + 1));
+        }
     }
+
     public static int GetMonthlyFileStats(int month){
         int count =0;
         File history = new File("History");
@@ -118,7 +131,7 @@ public class InquiryManager {
 
     private InquiryManager() {
         executer = Executors.newCachedThreadPool();
-        start();//הפעלה של הפונקציה לשליפה מהתור בסרד נפרד ע"י הפונקציה start
+        //start();//הפעלה של הפונקציה לשליפה מהתור בסרד נפרד ע"י הפונקציה start
     }
 
     public void inquiryCreation() {
@@ -188,11 +201,13 @@ public class InquiryManager {
         executer.shutdownNow();
     }
 
+    @Deprecated
     public void start() {
         Thread processingThread = new Thread(this::processInquiryManager);
         processingThread.start();
     }
 
+    @Deprecated
     public void processInquiryManager() {
         while (running) {
             try {
@@ -260,10 +275,9 @@ public class InquiryManager {
     }
 
     public static void removeInquiry(int id) throws Exception {
-        Map<Inquiry, ServiceRepresentative> map = getRepresentativeInquiryMap();
         Inquiry inq = null;
         boolean found = false;
-        for (var entry : map.entrySet()) {
+        for (var entry : representativeInquiryMap.entrySet()) {
             if (entry.getKey().getCode() == id) {
                 entry.getKey().setStatus(InquiryStatus.CANCELED);
                 inq = entry.getKey();
@@ -274,8 +288,9 @@ public class InquiryManager {
         if (!found) {
             throw new Exception("Inquiry num. " + id + " not found");
         }
-        ServiceRepresentative sr = map.remove(inq);
+        ServiceRepresentative sr = representativeInquiryMap.remove(inq);
         moveToHistory(id);
+
         InquiryManager.getInstance().getRepresentativeQ().add(sr);
     }
 

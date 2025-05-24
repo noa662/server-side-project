@@ -1,3 +1,4 @@
+import business.ConnectInquiryRepresentative;
 import business.InquiryManager;
 import business.RepresentativeManager;
 import clientServer.InquiryManagerServer;
@@ -9,6 +10,9 @@ public class Main {
 
     public static void main(String[] args) {
 
+        ConnectInquiryRepresentative connectInquiryRepresentative=new ConnectInquiryRepresentative();
+        connectInquiryRepresentative.start();
+
         ServiceRepresentative serviceRepresentative=new ServiceRepresentative("rep1",0);
         RepresentativeManager.AddRepresentative(serviceRepresentative);
         ServiceRepresentative serviceRepresentative2=new ServiceRepresentative("rep2",1);
@@ -17,7 +21,6 @@ public class Main {
         RepresentativeManager.AddRepresentative(serviceRepresentative3);
 
         InquiryManagerServer inquiryManagerServer=new InquiryManagerServer();
-        System.out.println("inquiryManagerServer");
         inquiryManagerServer.start();
 
         System.out.println("end main....");
