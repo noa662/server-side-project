@@ -1,5 +1,7 @@
 package clientServer;
 
+import business.InquiryManager;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,6 +12,7 @@ public class InquiryManagerServer {
     public InquiryManagerServer(){
         try {
             myServer=new ServerSocket(3030);
+            InquiryManager.getInstance();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

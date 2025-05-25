@@ -43,22 +43,26 @@ public class InquiryManager {
             return;
 
         //טעינת הפניות מתיקיית Inquiries
-        for (File dir : directory.listFiles()) {
-            File[] files = dir.listFiles();
-            if (files == null)
-                continue;
-            for (File f : files) {
-                IForSaving newInquiry = handleFiles.readFile(f);
-                nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
-                addInquiryToQueue((Inquiry) newInquiry, false);
+        if(directory.exists()) {
+            for (File dir : directory.listFiles()) {
+                File[] files = dir.listFiles();
+                if (files == null)
+                    continue;
+                for (File f : files) {
+                    IForSaving newInquiry = handleFiles.readFile(f);
+                    nextCodeVal = Math.max(nextCodeVal, ((Inquiry) newInquiry).getCode() + 1);
+                    addInquiryToQueue((Inquiry) newInquiry, false);
+                }
             }
         }
 
         //טעינת הפניות מקבצי History
-        for (File f : directory2.listFiles()) {
-            String name=f.getName();
-            String nameWithoutTxt=name.substring(0, name.lastIndexOf('.'));
-            nextCodeVal = Math.max(nextCodeVal, Integer.parseInt(nameWithoutTxt + 1));
+        if(directory2.exists()) {
+            for (File f : directory2.listFiles()) {
+                String name = f.getName();
+                String nameWithoutTxt = name.substring(0, name.lastIndexOf('.'));
+                nextCodeVal = Math.max(nextCodeVal, Integer.parseInt(nameWithoutTxt)+1);
+            }
         }
     }
 

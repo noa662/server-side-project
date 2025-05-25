@@ -2,9 +2,13 @@ package data;
 
 import HandleStoreFiles.IForSaving;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ServiceRepresentative implements IForSaving {
+public class ServiceRepresentative implements IForSaving, Serializable {
+
+    private static final long serialVersionUID = 1L;
+
 
     public ServiceRepresentative(String name, int code) {
         this.name = name;
