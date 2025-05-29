@@ -84,7 +84,7 @@ public class InquiryManager {
                         if (parts.length > 0) {
                             String date = parts[0];
                             LocalDateTime localDateTime = LocalDateTime.parse(date);
-                            if (localDateTime.getMonth() == LocalDate.now().getMonth()) {
+                            if (localDateTime.getMonthValue()== month) {
                                 count++;
                             }
                         }
