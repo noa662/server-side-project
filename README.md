@@ -1,45 +1,96 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# Inquiry Management System - Java
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+## Overview
+A system for managing customer/user inquiries, allowing organized receiving, handling, and tracking of different inquiry types (requests, questions, complaints) with an up-to-date status for each inquiry.  
+The system includes a Console interface and server-side processing, with an option for a personal agent to follow each inquiry until resolution.
 
----
 
-## Edit a file
+## Benefits for the Client
+- Full control and oversight of all received inquiries
+- Tracking inquiry status (opened, handled, canceled, archived)
+- Quick and organized response based on inquiry type
+- Centralized documentation of all customer interactions
+- Smart filtering and reporting by inquiry type, status, date, and more
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+## Inquiry Types
+1. Request (e.g., "Can I extend my subscription?")
+2. Question (e.g., "How do I operate the system?")
+3. Complaint (e.g., "The service did not work for me yesterday")
 
----
 
-## Create a file
+## Inquiry Management Stages
+- Opening an inquiry by a customer or user
+- Viewing and monitoring all inquiries by the support team
+- Handling the inquiry by an agent, marking it as "handled"
+- Canceling an inquiry (in case of self-resolution or irrelevance)
+- Archiving handled inquiries for documentation purposes
 
-Next, you’ll add a new file to this repository.
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+## Upgrade with Personal Agent
+- Assigning a unique agent to each inquiry who follows it from start to finish
+- Clear responsibility division and transparent managerial oversight
+- Improved customer service experience and internal efficiency
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
 
----
+## Key Features (Server-side)
+- Creating inquiries
+- Retrieving inquiry status (open, canceled, handled, archived)
+- Viewing all inquiries in the system
+- Canceling inquiries and moving them to the archive
+- Statistics on inquiry volume by time periods
+- Agent management (add, remove, save, and load from files)
+- Automatic assignment of inquiries to available agents
+- "My inquiries" list for agents
+- Background inquiry handling simulation
+- Full transparency for managers on agent workloads 
 
-## Clone a repository
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+## System Requirements
+- Java 11 or higher
+- Maven (or other build tool as per project)
+- Runtime environment with file permissions (for loading and saving agent data)
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+## Installation and Running
+1. Clone the server repository:
+```
+git clone https://github.com/noa662/server-side-project.git
+```
+2. Clone the client repository:
+```
+git clone https://github.com/noa662/client-side-project.git
+```
+
+
+### Running the Server
+Follow project instructions, for example:
+```
+mvn clean install
+java -jar target/server-side-project.jar
+```
+
+### Running the Client (Console)
+After cloning, run the console interface with:
+```
+mvn clean install
+java -jar target/client-side-project.jar
+```
+
+
+## Usage Examples
+- Creating a new inquiry via console
+- Viewing lists of inquiries with different statuses
+- Assigning inquiries to available agents
+- Simulating inquiry handling and archiving
+
+  
+## Documentation and Maintenance
+- Version control via Git and Bitbucket
+- Agile development methodology
+- Proper coding standards, edge case handling, and maintainability
+
+## Important Links
+- [Server Repository](https://github.com/noa662/server-side-project)
+- [Client Repository (Console)](https://github.com/noa662/client-side-project)
